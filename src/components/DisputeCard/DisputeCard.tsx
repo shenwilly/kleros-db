@@ -27,6 +27,21 @@ const DisputeCard: React.FC = () => {
                             </div>
                         </div>
                     </CardBottomRow>
+                    <CardBottomRowMobile>
+                        <div className="tc mt4">
+                        <PeriodContainer>
+                            Evidence Period
+                        </PeriodContainer>
+                        </div>
+                        <div className="tc pt4">
+                            <div>
+                                Next period in:
+                            </div>
+                            <div>
+                                3 Days
+                            </div>
+                        </div>
+                    </CardBottomRowMobile>
                     <div>
                         
                     </div>
@@ -40,7 +55,7 @@ const DisputeCard: React.FC = () => {
 };
 
 const Padding = styled.div.attrs({
-    className: 'dib w-50 w-third-gt-xs ph3 pb4'
+    className: 'dib w-100 w-50-sm w-third-gt-sm ph3 pb4'
 })`
 
 `;
@@ -61,7 +76,11 @@ const CardTopRow = styled.div.attrs({
 })``;
 
 const CardBottomRow = styled.div.attrs({
-    className: 'db w-100 flex nowrap items-end mt4'
+    className: 'dn flex-gt-xs w-100 nowrap items-end mt4'
+})``;
+
+const CardBottomRowMobile = styled.div.attrs({
+    className: 'flex-column dn-gt-xs mt3 items-center'
 })``;
 
 const PeriodContainer = styled.div.attrs({

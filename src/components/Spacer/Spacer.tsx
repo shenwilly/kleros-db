@@ -1,16 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 
-const Spacer: React.FC = () => {
+interface SpacerProp {
+  className?: string,
+}
+
+const Spacer: React.FC<SpacerProp> = ({ className }: { className?: string }) => {
     
   return (
-    <StyledSpacer/>
+    <>
+      <div className={className} />
+    </>
   );
 };
 
-const StyledSpacer = styled.div`
+const StyledSpacer = styled(Spacer)`
     height: 100%;
     width: 100%;
 `
 
-export default Spacer;
+export default StyledSpacer;

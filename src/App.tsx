@@ -74,7 +74,7 @@ const Providers: React.FC = ({ children }) => {
 const PageWrapper = styled.div.attrs({
   className: 'pt1'
 })`
-  height: calc(100vh - 70px);
+  min-height: 100vh;
   width: 100%;
 `
 
