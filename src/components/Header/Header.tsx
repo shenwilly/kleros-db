@@ -1,39 +1,63 @@
 import React from "react";
 import styled from "styled-components";
-import { FaToriiGate } from 'react-icons/fa';
+import { Link } from "react-router-dom";
 import Spacer from "../Spacer";
 
 const Header: React.FC = () => {    
   return (
     <HeaderGrid>
-        <FaToriiGate className="f1"/>
-        <Menu>
-            Disputes
-        </Menu>
-        <Menu>
-            Courts
-        </Menu>
-        <Menu>
-            Apps
-        </Menu>
+        <HeaderTitle>
+            Kleros Dashboard
+        </HeaderTitle>
+        <NavLink to="disputes">
+            <SelectedMenu>
+                Disputes
+            </SelectedMenu>
+        </NavLink>
+        <NavLink to="courts">
+            <Menu>
+                Courts
+            </Menu>
+        </NavLink>
+        <NavLink to="apps">
+            <Menu>
+                Apps
+            </Menu>
+        </NavLink>
         <Spacer/>
-        <Menu>
-            <FaToriiGate className="f1"/>
-        </Menu>
+        <NavLink to="about">
+            <Menu>
+                About
+            </Menu>
+        </NavLink>
     </HeaderGrid>
   );
 };
 
 const HeaderGrid = styled.div.attrs({
-    className: "pa2 pl3 flex items-center",
+    className: "pa2 pl4 flex items-center",
 })`
-    border-bottom: 1px solid grey;
-    background-color: rgb(25,25,25);
-    color: white;
+    color: ${props => props.theme.purpleDarker}
 `;
 
-const Menu = styled.span.attrs({
-    className: 'mh2'
+const HeaderTitle = styled.span.attrs({
+    className: 'f4 mr4 b'
 })``;
+
+const Menu = styled.span.attrs({
+    className: 'dn db-gt-xs mr4 pointer'
+})`
+    text-decoration: none!important
+`;
+
+const SelectedMenu = styled.span.attrs({
+    className: 'dn db-gt-xs mr4 b underline pointer'
+})``;
+
+const NavLink = styled(Link).attrs({
+    className: 'no-underline'
+})`
+    color: ${props => props.theme.purpleDarker}
+`;
 
 export default Header;

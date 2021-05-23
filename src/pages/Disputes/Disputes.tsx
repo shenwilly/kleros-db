@@ -56,11 +56,11 @@ const Home: React.FC = () => {
 };
 
 const Title = styled.div.attrs({
-    className: 'f3 pb1'
+    className: 'f4'
 })``;
 
 const SubTitle = styled.div.attrs({
-    className: 'f4 mt4 mb2'
+    className: 'f5 mt4 mb2'
 })``;
 
 const SearchInput = styled.input.attrs({
