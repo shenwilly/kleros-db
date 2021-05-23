@@ -1,37 +1,25 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { useLocation } from 'react-router-dom'
 import Spacer from "../Spacer";
+import NavMenu from "../NavMenu";
 
 const Header: React.FC = () => {    
-  return (
-    <HeaderGrid>
-        <HeaderTitle>
-            Kleros Dashboard
-        </HeaderTitle>
-        <NavLink to="disputes">
-            <SelectedMenu>
-                Disputes
-            </SelectedMenu>
-        </NavLink>
-        <NavLink to="courts">
-            <Menu>
-                Courts
-            </Menu>
-        </NavLink>
-        <NavLink to="apps">
-            <Menu>
-                Apps
-            </Menu>
-        </NavLink>
-        <Spacer/>
-        <NavLink to="about">
-            <Menu>
-                About
-            </Menu>
-        </NavLink>
-    </HeaderGrid>
-  );
+    const location = useLocation();
+    const currentPath = location.pathname;
+
+    return (
+        <HeaderGrid>
+            <HeaderTitle>
+                Kleros Dashboard
+            </HeaderTitle>
+            <NavMenu to="/disputes" label="Disputes" active={currentPath === "/disputes"} />
+            <NavMenu to="/courts" label="Courts" active={currentPath === "/courts"} />
+            <NavMenu to="/apps" label="Apps" active={currentPath === "/apps"} />
+            <Spacer/>
+            <NavMenu to="/about" label="About" active={currentPath === "/about"} />
+        </HeaderGrid>
+    );
 };
 
 const HeaderGrid = styled.div.attrs({
@@ -43,21 +31,5 @@ const HeaderGrid = styled.div.attrs({
 const HeaderTitle = styled.span.attrs({
     className: 'f4 mr4 b'
 })``;
-
-const Menu = styled.span.attrs({
-    className: 'dn db-gt-xs mr4 pointer'
-})`
-    text-decoration: none!important
-`;
-
-const SelectedMenu = styled.span.attrs({
-    className: 'dn db-gt-xs mr4 b underline pointer'
-})``;
-
-const NavLink = styled(Link).attrs({
-    className: 'no-underline'
-})`
-    color: ${props => props.theme.purpleDarker}
-`;
 
 export default Header;
