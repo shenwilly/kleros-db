@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Page from "../../components/Page";
 import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
+import { Dispute } from "../../types/Dispute";
 
 const LATEST_DISPUTES_GQL = gql`
     query latestDisputes {
@@ -11,6 +12,7 @@ const LATEST_DISPUTES_GQL = gql`
             disputeID
             subcourt {
                 id
+                children
             }
             period
             ruled
@@ -18,14 +20,18 @@ const LATEST_DISPUTES_GQL = gql`
     }
 `;
 
+type Disputes = {
+    disputes: Dispute[];
+}
+  
 const Disputes: React.FC = () => {
-    const { loading, error, data } = useQuery(LATEST_DISPUTES_GQL);
+    const { loading, error, data } = useQuery<Disputes>(LATEST_DISPUTES_GQL);
     
     // if (loading) return <p>Loading...</p>;
     // if (error) return <p>Error :(</p>;
     
-    console.log(data);
     const disputes = data?.disputes ?? [];
+    console.log(disputes);
     
     return (
         <Page>
@@ -37,8 +43,9 @@ const Disputes: React.FC = () => {
 
             <DisputeGrid>
                 {  
-                    disputes.map((dispute: any) => (<DisputeCard />)
-                    )
+                    disputes.map((dispute) => (
+                        <DisputeCard key={dispute.id} dispute={dispute}/>
+                    ))
                 }
             </DisputeGrid>
 

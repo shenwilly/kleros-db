@@ -1,21 +1,25 @@
 import React from "react";
 import styled from "styled-components";
 import Spacer from "../Spacer";
-import NavMenu from "../NavMenu";
+import { Dispute } from "../../types/Dispute";
 
-const DisputeCard: React.FC = () => {    
+interface DisputeCardProp {
+    dispute?: Dispute,
+}
+
+const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {    
     return (
         <>
             <Padding>
                 <Card>
                     <CardTopRow>
-                        <span className="f4 b">#711</span>
+                        <span className="f4 b">#{dispute?.id}</span>
                         <Spacer/>
                         <span>Humanity Court</span>
                     </CardTopRow>
                     <CardBottomRow>
                         <PeriodContainer>
-                            Evidence Period
+                            {dispute?.period} Period
                         </PeriodContainer>
                         <Spacer/>
                         <div className="tr">
