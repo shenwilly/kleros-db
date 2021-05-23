@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
+import DisputeCard from "../../components/DisputeCard";
 
 const Home: React.FC = () => {
     
@@ -8,16 +9,18 @@ const Home: React.FC = () => {
     <Page>
         <Title>Disputes</Title>
         <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/>
-        <div className="mt2 mb3">
-            <StatLabel>ETH Price: $2,073</StatLabel>
-            <StatLabel>Transactions (24H): 164,728</StatLabel>
-            <StatLabel>Pairs: 32,408</StatLabel>
-            <StatLabel>Fees (24H): $3,184,943</StatLabel>
-        </div>
-
         <SubTitle>
-            Top Tokens
+            Latest Disputes
         </SubTitle>
+
+        <DisputeGrid>
+            <DisputeCard />
+            <DisputeCard />
+            <DisputeCard />
+            <DisputeCard />
+            <DisputeCard />
+            <DisputeCard />
+        </DisputeGrid>
 
         <FullBox>
             {/* <table className="w-100 tr pa2">
@@ -60,7 +63,7 @@ const Title = styled.div.attrs({
 })``;
 
 const SubTitle = styled.div.attrs({
-    className: 'f5 mt4 mb2'
+    className: 'mv3'
 })``;
 
 const SearchInput = styled.input.attrs({
@@ -73,6 +76,10 @@ const SearchInput = styled.input.attrs({
     background-color: rgba(250, 250, 250, 0.7);
     -webkit-box-shadow: 0px 6px 17px 1px rgba(0,0,0,0.2); 
     box-shadow: 0px 6px 15px 1px rgba(0,0,0,0.15);
+
+    :focus-visible {
+        outline: none;
+    }
 `;
 
 const StatLabel = styled.span.attrs({
@@ -98,6 +105,12 @@ const FullBox = styled.div.attrs({
     className: 'dib w-100 bg-white'
 })`
     border-radius: 8px;
+`;
+
+const DisputeGrid = styled.div.attrs({
+    className: 'db w-100'
+})`
+
 `;
 
 export default Home;

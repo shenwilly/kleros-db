@@ -51,8 +51,8 @@ const Providers: React.FC = ({ children }) => {
     purplePrimary: 'rgb(144,20,254)',
     purpleDark: 'rgb(66,3,159)',
     purpleDarker: 'rgb(30,7,95)',
-    purpleLighter: 'rgb(202,150,255)',
-    purpleLightest: 'rgb(242,227,255)',
+    purpleLight: 'rgb(202,150,255)',
+    purpleLighter: 'rgb(242,227,255)',
 
     greyLight: 'rgb(180, 180, 180)',
     grey: 'lightgrey',
@@ -71,7 +71,9 @@ const Providers: React.FC = ({ children }) => {
   );
 };
 
-const PageWrapper = styled.div`
+const PageWrapper = styled.div.attrs({
+  className: 'pt1'
+})`
   height: calc(100vh - 70px);
   width: 100%;
 `
