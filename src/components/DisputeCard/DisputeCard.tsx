@@ -29,9 +29,9 @@ const DisputeCard: React.FC = () => {
                     </CardBottomRow>
                     <CardBottomRowMobile>
                         <div className="tc mt4">
-                        <PeriodContainer>
-                            Evidence Period
-                        </PeriodContainer>
+                            <PeriodContainer>
+                                Evidence Period
+                            </PeriodContainer>
                         </div>
                         <div className="tc pt4">
                             <div>
@@ -42,12 +42,6 @@ const DisputeCard: React.FC = () => {
                             </div>
                         </div>
                     </CardBottomRowMobile>
-                    <div>
-                        
-                    </div>
-                    <div>
-                        
-                    </div>
                 </Card>
             </Padding>   
         </>
@@ -56,9 +50,7 @@ const DisputeCard: React.FC = () => {
 
 const Padding = styled.div.attrs({
     className: 'dib w-100 w-50-sm w-third-gt-sm ph3 pb4'
-})`
-
-`;
+})``;
 
 const Card = styled.div.attrs({
     className: 'dib br3 w-100 pa3 bg-white pointer'
@@ -88,15 +80,5 @@ const PeriodContainer = styled.div.attrs({
 })`
     position: relative
 `;
-
-const HeaderGrid = styled.div.attrs({
-    className: "pa2 pl4 flex items-center",
-})`
-    color: ${props => props.theme.purpleDarker}
-`;
-
-const HeaderTitle = styled.span.attrs({
-    className: 'f4 mr4 b'
-})``;
 
 export default DisputeCard;
