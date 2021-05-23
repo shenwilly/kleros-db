@@ -1,0 +1,13 @@
+{
+    "customMedia": [
+      { "sm": "600px" },
+      { "md": "960px" },
+      { "lg": "1280px" },
+      { "xl": "1920px" },
+      { "gt-xs": { "value": "600px", "minWidth": true } },
+      { "gt-sm": { "value": "960px", "minWidth": true } },
+      { "gt-md": { "value": "1280px", "minWidth": true } },
+      { "gt-lg": { "value": "1920px", "minWidth": true } }
+    ]
+  }
+  
