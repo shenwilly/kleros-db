@@ -7,7 +7,7 @@ const Home: React.FC = () => {
     return (
     <Page>
         <Title>Disputes</Title>
-        <SearchInput placeholder="Search Uniswap pairs and tokens.." type="input"/>
+        <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/>
         <div className="mt2 mb3">
             <StatLabel>ETH Price: $2,073</StatLabel>
             <StatLabel>Transactions (24H): 164,728</StatLabel>

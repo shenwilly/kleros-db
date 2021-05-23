@@ -83,9 +83,9 @@ const HeaderWrapper = styled.div.attrs({
 const SiteWrapper = styled.div`
   background-color: #fff;
   background-image:
-    radial-gradient(at top left, rgb(232,217,245), transparent),
-    radial-gradient(at top right, rgb(202,150,255), transparent),
-    radial-gradient(at bottom left, rgb(202,150,255), transparent);
+    radial-gradient(at top left, rgb(242,227,255), transparent),
+    radial-gradient(at top right, rgb(190,140,243), transparent),
+    radial-gradient(at bottom left, rgb(172,120,225), transparent);
 `
 
 export default App;
