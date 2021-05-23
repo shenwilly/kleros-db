@@ -6,6 +6,13 @@ import Header from "./components/Header";
 import Courts from "./pages/Courts";
 import Apps from "./pages/Apps";
 import About from "./pages/About";
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
+
+const client = new ApolloClient({
+  uri: 'https://api.thegraph.com/subgraphs/name/shenwilly/kleros-liquid',
+  cache: new InMemoryCache()
+});
 
 const App: React.FC = () => {
 
@@ -65,7 +72,9 @@ const Providers: React.FC = ({ children }) => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        {children}
+        <ApolloProvider client={client}>
+          {children}
+        </ApolloProvider>
       </ThemeProvider>
     </>
   );

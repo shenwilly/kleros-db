@@ -2,59 +2,79 @@ import React from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
 import DisputeCard from "../../components/DisputeCard";
+import { useQuery, gql } from '@apollo/client';
 
-const Home: React.FC = () => {
+const LATEST_DISPUTES_GQL = gql`
+    query latestDisputes {
+        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
+            id
+            disputeID
+            subcourt {
+                id
+            }
+            period
+            ruled
+        }
+    }
+`;
+
+const Disputes: React.FC = () => {
+    const { loading, error, data } = useQuery(LATEST_DISPUTES_GQL);
+    
+    // if (loading) return <p>Loading...</p>;
+    // if (error) return <p>Error :(</p>;
+    
+    console.log(data);
+    const disputes = data?.disputes ?? [];
     
     return (
-    <Page>
-        <Title>Disputes</Title>
-        <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/>
-        <SubTitle>
-            Latest Disputes
-        </SubTitle>
+        <Page>
+            <Title>Disputes</Title>
+            <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/>
+            <SubTitle>
+                Latest Disputes
+            </SubTitle>
 
-        <DisputeGrid>
-            <DisputeCard />
-            <DisputeCard />
-            <DisputeCard />
-            <DisputeCard />
-            <DisputeCard />
-            <DisputeCard />
-        </DisputeGrid>
+            <DisputeGrid>
+                {  
+                    disputes.map((dispute: any) => (<DisputeCard />)
+                    )
+                }
+            </DisputeGrid>
 
-        <FullBox>
-            {/* <table className="w-100 tr pa2">
-                <thead>
-                    <tr>
-                        <th className="tl w-30">Name</th>
-                        <th>Liquidity</th>
-                        <th>Volume (24hrs)</th>
-                        <th>Volume (7d)</th>
-                        <th>Fees (24hr)</th>
-                        <th>1y Fees / Liquidity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className="tl">Name</td>
-                        <td>Liquidity</td>
-                        <td>Volume (24hrs)</td>
-                        <td>Volume (7d)</td>
-                        <td>Fees (24hr)</td>
-                        <td>1y Fees / Liquidity</td>
-                    </tr>
-                    <tr>
-                        <td className="tl">Name</td>
-                        <td>Liquidity</td>
-                        <td>Volume (24hrs)</td>
-                        <td>Volume (7d)</td>
-                        <td>Fees (24hr)</td>
-                        <td>1y Fees / Liquidity</td>
-                    </tr>
-                </tbody>
-            </table> */}
-        </FullBox>
-    </Page>
+            <FullBox>
+                {/* <table className="w-100 tr pa2">
+                    <thead>
+                        <tr>
+                            <th className="tl w-30">Name</th>
+                            <th>Liquidity</th>
+                            <th>Volume (24hrs)</th>
+                            <th>Volume (7d)</th>
+                            <th>Fees (24hr)</th>
+                            <th>1y Fees / Liquidity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="tl">Name</td>
+                            <td>Liquidity</td>
+                            <td>Volume (24hrs)</td>
+                            <td>Volume (7d)</td>
+                            <td>Fees (24hr)</td>
+                            <td>1y Fees / Liquidity</td>
+                        </tr>
+                        <tr>
+                            <td className="tl">Name</td>
+                            <td>Liquidity</td>
+                            <td>Volume (24hrs)</td>
+                            <td>Volume (7d)</td>
+                            <td>Fees (24hr)</td>
+                            <td>1y Fees / Liquidity</td>
+                        </tr>
+                    </tbody>
+                </table> */}
+            </FullBox>
+        </Page>
     );
 };
 
@@ -113,4 +133,4 @@ const DisputeGrid = styled.div.attrs({
 
 `;
 
-export default Home;
+export default Disputes;
