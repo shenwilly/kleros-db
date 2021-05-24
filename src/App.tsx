@@ -9,6 +9,7 @@ import About from "./pages/About";
 import { CgSpinner } from "react-icons/cg";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
+import { CourtsProvider } from './contexts/Courts';
 
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/shenwilly/kleros-liquid',
@@ -76,7 +77,9 @@ const Providers: React.FC = ({ children }) => {
     <>
       <ThemeProvider theme={theme}>
         <ApolloProvider client={client}>
+          <CourtsProvider>
             {children}
+          </CourtsProvider>
         </ApolloProvider>
       </ThemeProvider>
     </>
