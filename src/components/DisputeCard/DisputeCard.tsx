@@ -2,12 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import Spacer from "../Spacer";
 import { Dispute } from "../../types/Dispute";
+import useCourts from "../../hooks/useCourts";
 
 interface DisputeCardProp {
     dispute?: Dispute,
 }
 
-const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {    
+const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
+    const { subcourtToPolicy } = useCourts();
+    let courtName: string = "";
+
+    if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
+        courtName = subcourtToPolicy.get(dispute.subcourt.id)?.name ?? "";
+        if (courtName.length > 0 && !courtName.toLowerCase().includes("court")) {
+            courtName = courtName + " Court";
+        }
+    }
+    
     return (
         <>
             <Padding>
@@ -15,7 +26,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
                     <CardTopRow>
                         <span className="f4 b">#{dispute?.id}</span>
                         <Spacer/>
-                        <span>Humanity Court</span>
+                        <span>{courtName}</span>
                     </CardTopRow>
                     <CardBottomRow>
                         <PeriodContainer>
