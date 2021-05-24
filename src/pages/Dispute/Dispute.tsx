@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
-import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
 import { Dispute } from "../../types/Dispute";
+import PeriodContainer from "../../components/PeriodContainer";
+import TimeDisplay from "../../components/TimeDisplay";
+import { ImFileText2 } from "react-icons/im";
 
 const LATEST_DISPUTES_GQL = gql`
     query latestDisputes {
@@ -25,6 +27,9 @@ type Disputes = {
 }
   
 const DisputePage: React.FC = () => {
+    let dispute = {
+        id: "761"
+    }
     // const { loading, error, data } = useQuery<Disputes>(LATEST_DISPUTES_GQL);
     
     // if (loading) return <p>Loading...</p>;
@@ -35,64 +40,96 @@ const DisputePage: React.FC = () => {
     
     return (
         <Page>
-            <Title>Dispute #761</Title>
+            <Card>
+                <Title>Dispute #761 - Humanity Court</Title>
+                
+                <SubTitle>Proof of Humanity Registration Request</SubTitle>
+                <span>A request to register the specified entry to a list of provable humans.</span>
+                
+                <SubTitle>Question:</SubTitle>
+                <span>Should the request to register be accepted?</span>
+                
+                <SubTitle>Choices:</SubTitle>
+                <span>Yes / No</span>
 
+                <SubTitle>Answer:</SubTitle>
+                <span>Yes</span>
 
+                <SubTitle>Dispute Status:</SubTitle>
+                <span>Final</span>
+
+                <SubTitle>Primary Document:</SubTitle>
+                <Circle>
+                    <CircleText><ImFileText2 className="f4" /></CircleText>
+                </Circle>
+
+                
+                <FloatBoxTopRight>
+                    <PeriodContainer period="Execution"/>
+                    <div className="tr mt3">
+                        <div>Next period in:</div>
+                        <TimeDisplay duration="3 days"/>
+                    </div>
+                </FloatBoxTopRight>
+
+                <FloatBoxBottomRight>
+                    <div className="tr mb2">Check case on:</div>
+                    <div className="tr mb2">
+                        <a className="b" href={`https://court.kleros.io/cases/${dispute.id}`} target="blank">Court</a>
+                    </div>
+                    <div className="tr mb2">
+                        <a className="b" href={`http://klerosboard.com/dispute/?id=${dispute.id}`} target="blank">KlerosBoard</a>
+                    </div>
+                    <div className="tr mb2">
+                        <a className="b" href={`https://klerosexplorer.com/case/${dispute.id}`} target="blank">KlerosExplorer</a>
+                    </div>
+                </FloatBoxBottomRight>
+            </Card>
         </Page>
     );
 };
 
+const Card = styled.div.attrs({
+    className: 'db br3 w-100 pa3 bg-white'
+})`
+    -webkit-box-shadow: 1px 5px 10px 2px rgba(0,0,0,0.2); 
+    box-shadow: 1px 5px 10px 2px rgba(0,0,0,0.15);
+
+    position: relative;
+
+    background-image:
+        radial-gradient(at top right, rgb(242,227,255), transparent),
+        radial-gradient(at bottom left, rgb(242,227,255), transparent);
+`;
+
 const Title = styled.div.attrs({
-    className: 'f4'
+    className: 'b f4'
 })``;
 
 const SubTitle = styled.div.attrs({
-    className: 'mv3'
+    className: 'mt3 mb2 f4'
 })``;
 
-const SearchInput = styled.input.attrs({
-    className: 'mt3 mb3 w-100 pv3'
+const FloatBoxTopRight = styled.div.attrs({
+    className: 'absolute top-1 right-1 mt2'
+})``;
+
+const FloatBoxBottomRight = styled.div.attrs({
+    className: 'absolute bottom-1 right-1'
+})``;
+
+const Circle = styled.div.attrs({
+    className: 'flex pointer'
 })`
-    width: 100%;
-    text-indent: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: rgba(250, 250, 250, 0.7);
-    -webkit-box-shadow: 0px 6px 17px 1px rgba(0,0,0,0.2); 
-    box-shadow: 0px 6px 15px 1px rgba(0,0,0,0.15);
-
-    :focus-visible {
-        outline: none;
-    }
+    width: 50px;
+    height: 50px;
+    background-color: ${props => props.theme.purplePrimary};
+    border-radius: 50%;
 `;
 
-const StatLabel = styled.span.attrs({
-    className: 'f5 mr3'
-})``;
-
-interface ClassNameProps {
-    className?: string;
-}
-
-const HalfBox = styled.div.attrs<ClassNameProps>(props => ({
-    className: `dib h-100 w-100 w-50-gt-xs ${props.className}`
-}))`
-    height: '80px';
-    border-radius: 8px;
+const CircleText = styled.div`
+    margin: auto;
+    color: white;
 `;
-
-const WhiteBox = styled.div.attrs<ClassNameProps>(props => ({
-    className: `bg-white br4 h-100 ${props.className}`
-}))``;
-
-const FullBox = styled.div.attrs({
-    className: 'dib w-100 bg-white'
-})`
-    border-radius: 8px;
-`;
-
-const DisputeGrid = styled.div.attrs({
-    className: 'db w-100'
-})``;
 
 export default DisputePage;
