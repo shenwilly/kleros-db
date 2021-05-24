@@ -3,6 +3,8 @@ import styled from "styled-components";
 import Spacer from "../Spacer";
 import { Dispute } from "../../types/Dispute";
 import useCourts from "../../hooks/useCourts";
+import PeriodContainer from "../PeriodContainer";
+import TimeDisplay from "../TimeDisplay";
 
 interface DisputeCardProp {
     dispute?: Dispute,
@@ -29,32 +31,24 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
                         <span>{courtName}</span>
                     </CardTopRow>
                     <CardBottomRow>
-                        <PeriodContainer>
-                            {dispute?.period} Period
-                        </PeriodContainer>
+                        <PeriodContainer period={dispute?.period}/>
                         <Spacer/>
                         <div className="tr">
                             <div>
                                 Next period in:
                             </div>
-                            <div>
-                                3 Days
-                            </div>
+                            <TimeDisplay duration="3 days"/>
                         </div>
                     </CardBottomRow>
                     <CardBottomRowMobile>
                         <div className="tc mt4">
-                            <PeriodContainer>
-                                Evidence Period
-                            </PeriodContainer>
+                            <PeriodContainer period={dispute?.period}/>
                         </div>
                         <div className="tc pt4">
                             <div>
                                 Next period in:
                             </div>
-                            <div>
-                                3 Days
-                            </div>
+                            <TimeDisplay duration="3 days"/>
                         </div>
                     </CardBottomRowMobile>
                 </Card>
@@ -89,11 +83,5 @@ const CardBottomRow = styled.div.attrs({
 const CardBottomRowMobile = styled.div.attrs({
     className: 'flex-column dn-gt-xs mt3 items-center'
 })``;
-
-const PeriodContainer = styled.div.attrs({
-    className: 'di bg-green white pv2 ph3 br4 b'
-})`
-    position: relative
-`;
 
 export default DisputeCard;
