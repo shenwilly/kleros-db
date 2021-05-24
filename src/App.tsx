@@ -1,15 +1,16 @@
 import React from "react";
 import styled, { ThemeProvider } from "styled-components";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import DisputesPage from "./pages/Disputes";
 import Header from "./components/Header";
-import Courts from "./pages/Courts";
-import Apps from "./pages/Apps";
-import About from "./pages/About";
+import DisputesPage from "./pages/Disputes";
+import CourtsPage from "./pages/Courts";
+import AppsPage from "./pages/Apps";
+import AboutPage from "./pages/About";
 import { CgSpinner } from "react-icons/cg";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { CourtsProvider } from './contexts/Courts';
+import useCourts from "./hooks/useCourts";
 
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/shenwilly/kleros-liquid',
@@ -17,7 +18,8 @@ const client = new ApolloClient({
 });
 
 const App: React.FC = () => {
-  
+  const { loaded } = useCourts(); // load court metadata
+  const loadingClassName = loaded == true ? "fade-out": "";
 
   return (
     <>
@@ -35,21 +37,23 @@ const App: React.FC = () => {
                   <DisputesPage />
                 </Route>
                 <Route exact path="/courts">
-                  <Courts />
+                  <CourtsPage />
                 </Route>
                 <Route exact path="/apps">
-                  <Apps />
+                  <AppsPage />
                 </Route>
                 <Route exact path="/about">
-                  <About />
+                  <AboutPage />
                 </Route>
               </Switch>
         </PageWrapper>
           </Router>
       </SiteWrapper>
-      <LoadingScreen>
-        <CgSpinner className="f1 rotate-center"/>
-      </LoadingScreen>
+      <div className={loadingClassName}>
+        <LoadingScreen>
+          <CgSpinner className="f1 rotate-center"/>
+        </LoadingScreen>
+      </div>
     </>
   );
 };

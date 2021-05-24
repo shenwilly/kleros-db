@@ -5,6 +5,7 @@ import { http } from "../../utils/http/http";
 import { Policy } from "../../types/Policy";
 
 const Provider: React.FC = ({ children }) => {
+    const [ loaded, setLoaded ] = useState(false);
     const [ subcourtToPolicy, setSubcourtToPolicy ] = useState(new Map());
     const policyQuery = useQuery<Policies>(COURT_POLICIES_GQL);
     const policyData = policyQuery.data;
@@ -31,6 +32,7 @@ const Provider: React.FC = ({ children }) => {
           
           await Promise.allSettled(promises);
           setSubcourtToPolicy(newSubcourtToPolicy);
+          setLoaded(true);
       };
 
       if (policyData) {
@@ -41,6 +43,7 @@ const Provider: React.FC = ({ children }) => {
     return (
         <Context.Provider
             value={{
+              loaded,
               subcourtToPolicy
             }}>
             {children}

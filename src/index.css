@@ -46,3 +46,9 @@ body {
             transform: rotate(360deg);
   }
 }
+
+.fade-out {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s .35s, opacity .35s linear;
+}
