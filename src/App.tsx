@@ -6,6 +6,7 @@ import DisputesPage from "./pages/Disputes";
 import CourtsPage from "./pages/Courts";
 import AppsPage from "./pages/Apps";
 import AboutPage from "./pages/About";
+import DisputePage from "./pages/Dispute";
 import { CgSpinner } from "react-icons/cg";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
@@ -45,6 +46,9 @@ const App: React.FC = () => {
                 <Route exact path="/about">
                   <AboutPage />
                 </Route>
+                <Route exact path="/disputes/:id">
+                  <DisputePage />
+                </Route>
               </Switch>
         </PageWrapper>
           </Router>
@@ -72,6 +76,7 @@ const Providers: React.FC = ({ children }) => {
     greyLight: 'rgb(180, 180, 180)',
     grey: 'lightgrey',
     greyDark: 'grey',
+    textColor: '#1F1F1F',
 
     sm: '600px',
     md: '960px',

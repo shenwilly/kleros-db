@@ -4,6 +4,7 @@ import Page from "../../components/Page";
 import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
 import { Dispute } from "../../types/Dispute";
+import { Link } from "react-router-dom";
 
 const LATEST_DISPUTES_GQL = gql`
     query latestDisputes {
@@ -44,7 +45,9 @@ const Disputes: React.FC = () => {
             <DisputeGrid>
                 {  
                     disputes.map((dispute) => (
-                        <DisputeCard key={dispute.id} dispute={dispute}/>
+                        <StyledLink to="disputes/761">
+                            <DisputeCard key={dispute.id} dispute={dispute}/>
+                        </StyledLink>
                     ))
                 }
             </DisputeGrid>
@@ -136,8 +139,12 @@ const FullBox = styled.div.attrs({
 
 const DisputeGrid = styled.div.attrs({
     className: 'db w-100'
-})`
+})``;
 
+const StyledLink = styled(Link).attrs({
+    className: 'no-underline'
+})`
+    color: ${props => props.theme.textColor}
 `;
 
 export default Disputes;
