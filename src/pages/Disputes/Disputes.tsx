@@ -36,7 +36,7 @@ const Disputes: React.FC = () => {
     return (
         <Page>
             <Title>Disputes</Title>
-            <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/>
+            {/* <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/> */}
             <SubTitle>
                 Latest Disputes
             </SubTitle>
