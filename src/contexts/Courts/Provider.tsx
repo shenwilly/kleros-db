@@ -26,14 +26,27 @@ const Provider: React.FC = ({ children }) => {
 
             const subcourtID = policyData.subcourtID
             promises.push(http(url).then(response => {
-              subcourtToPolicy.set(subcourtID, response);
+              newSubcourtToPolicy.set(subcourtID, response);
             }));
           })
           
           await Promise.allSettled(promises);
           setSubcourtToPolicy(newSubcourtToPolicy);
           setLoaded(true);
+
+          localStorage.setItem("subcourtToPolicy", JSON.stringify(Array.from(newSubcourtToPolicy.entries())));
       };
+
+      const subCourtToPolicyString = localStorage.getItem("subcourtToPolicy");
+      if (subCourtToPolicyString) {
+        setSubcourtToPolicy(new Map(JSON.parse(subCourtToPolicyString)));
+        setLoaded(true);
+      }
+      
+      // TODO: 24H delay before refreshing data
+      // if (recentlyLoaded) {
+      //   return;
+      // }
 
       if (policyData) {
         fetchPolicies()
