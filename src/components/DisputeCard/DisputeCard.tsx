@@ -31,7 +31,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
                         <span>{courtName}</span>
                     </CardTopRow>
                     <CardBottomRow>
-                        <PeriodContainer period={dispute?.period}/>
+                        <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
                         <Spacer/>
                         <div className="tr">
                             <div>
@@ -42,7 +42,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
                     </CardBottomRow>
                     <CardBottomRowMobile>
                         <div className="tc mt4">
-                            <PeriodContainer period={dispute?.period}/>
+                            <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
                         </div>
                         <div className="tc pt4">
                             <div>

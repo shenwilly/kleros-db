@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
 import { useQuery, gql } from '@apollo/client';
-import { Dispute } from "../../types/Dispute";
+import { Dispute, Period } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 // import { ImFileText2 } from "react-icons/im";
@@ -81,6 +81,9 @@ const DisputePage: React.FC = () => {
             return;
         }
 
+        // dispute.period = ;
+        console.log(dispute, "!?", Period.Commit)
+
         const rulingOptionTitles = metaEvidence.rulingOptions?.titles;
         if (!rulingOptionTitles || rulingOptionTitles?.length == 0) {
             setRuling("-");
@@ -156,7 +159,7 @@ const DisputePage: React.FC = () => {
                 </div> */}
 
                 <FloatBoxTopRight>
-                    <PeriodContainer period="Execution"/>
+                    <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
                     <div className="tr mt3">
                         <div>Next period in:</div>
                         <TimeDisplay duration="3 days"/>
@@ -223,7 +226,7 @@ const SubTitle = styled.div.attrs({
 })``;
 
 const FloatBoxTopRight = styled.div.attrs({
-    className: 'absolute top-1 right-1 mt2'
+    className: 'absolute top-1 right-1 mt2 tr'
 })``;
 
 const FloatBoxBottomRight = styled.div.attrs({

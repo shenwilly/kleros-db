@@ -1,3 +1,3 @@
 export type Arbitrable = {
-    id: string,
+    id: string;
 }
