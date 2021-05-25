@@ -12,26 +12,26 @@ const PeriodContainer: React.FC<PeriodContainerProps> = ({ period, ruled }) => {
   const [colorClass, setColorClass] = useState<string>("grey");
 
   useEffect(() => {
-    let color: string = "red";
+    let color: string = "";
+    
     if (ruled === true) {
-      color = "rgb(66,3,159)";
+      color = "rgb(144,20,254)";
     } else {
       switch (period) {
         case Period.Evidence:
-          console.log("GA MASUK?")
-          color = "green"
+          color = "#19A974"
           break;
         case Period.Commit:
-          color = "blue"
+          color = "#357EDD"
           break;
         case Period.Vote:
-          color = "blue"
+          color = "#357EDD"
           break;
         case Period.Appeal:
-          color = "red"
+          color = "#FF4136"
           break;
         case Period.Execution:
-          color = "rgb(66,3,159)"
+          color = "rgb(144,20,254)"
           break;
         default:
           break;
@@ -40,13 +40,6 @@ const PeriodContainer: React.FC<PeriodContainerProps> = ({ period, ruled }) => {
     
     setColorClass(color)
   }, [period, ruled]);
-
-  // evidence green
-  // commit blue
-  // voting blue
-  // appeal red
-  // execution purple
-  // ruled purple dark
     
   return (
     <StyledContainer style={{ backgroundColor: colorClass }}>
