@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import SearchBox from "../SearchBox";
 import useSearch from "../../hooks/useSearch";
+import { useHistory } from "react-router-dom";
 
 const SearchBar: React.FC = () => {
-    const { query, setQuery } = useSearch();
+    const { query, setQuery, results } = useSearch();
     const [showResult, setShowResult] = useState<boolean>(false);
+    const history = useHistory();
 
     useEffect(() => {
         if (query.length > 0) {
@@ -14,6 +16,16 @@ const SearchBar: React.FC = () => {
             setShowResult(false)
         }
     }, [query]);
+
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            if (results.length > 0) {
+                const dispute = results[0];
+                history.push(`/disputes/${dispute.id}`);
+                setQuery("");
+            }
+        }
+    }
     
     return (
         <StyledContainer>
@@ -21,6 +33,7 @@ const SearchBar: React.FC = () => {
                 placeholder="Search Dispute by ID  🔍" 
                 type="input"
                 value={query}
+                onKeyDown={e => handleEnterKey(e)} 
                 onChange={e => setQuery(e.target.value)}
                 />
             {showResult && <SearchBox/>}

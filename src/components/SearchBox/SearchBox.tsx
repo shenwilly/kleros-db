@@ -7,9 +7,9 @@ import { useHistory } from "react-router-dom";
 
 const SearchBox: React.FC = () => {
     const { results, loading, setQuery } = useSearch();
+    const history = useHistory();
     const disputes = results;
 
-    const history = useHistory();
     const handleOnClick = (disputeID: string) => {
         history.push(`/disputes/${disputeID}`);
         setQuery("");
