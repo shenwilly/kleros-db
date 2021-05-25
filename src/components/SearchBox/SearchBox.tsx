@@ -4,8 +4,10 @@ import { CgSpinner } from "react-icons/cg";
 import SearchResultCard from "../SearchResultCard";
 import useSearch from "../../hooks/useSearch";
 import { useHistory } from "react-router-dom";
+import useCourts from "../../hooks/useCourts";
 
 const SearchBox: React.FC = () => {
+    const { subcourtToPolicy } = useCourts();
     const { results, loading, setQuery } = useSearch();
     const history = useHistory();
     const disputes = results;
@@ -13,6 +15,20 @@ const SearchBox: React.FC = () => {
     const handleOnClick = (disputeID: string) => {
         history.push(`/disputes/${disputeID}`);
         setQuery("");
+    }
+
+    const getCourtName = (subcourtID: string): string => {
+        // TODO: temp
+        let courtName: string = "";
+
+        if (subcourtID.length > 0 && subcourtToPolicy.has(subcourtID)) {
+            courtName = subcourtToPolicy.get(subcourtID)?.name ?? "";
+            if (courtName.length > 0 && !courtName.toLowerCase().includes("court")) {
+                courtName = courtName + " Court";
+            }
+        }
+
+        return courtName;
     }
     
     return (
@@ -26,13 +42,16 @@ const SearchBox: React.FC = () => {
                     <span>Dispute not found</span>
                 </div>}
             { !loading && disputes.length > 0 && 
-                disputes.map((dispute) => (
-                    <SearchResultCard 
-                        key={dispute.id}
-                        title={`Dispute #${dispute.id}`}
-                        subtitle={`Humanity Court`}
-                        onClick={() => handleOnClick(dispute.id)}/>
-                ))
+                disputes.map((dispute) => {
+                    const courtName = getCourtName(dispute?.subcourt?.id ?? "");
+                    return (
+                        <SearchResultCard 
+                            key={dispute.id}
+                            title={`Dispute #${dispute.id}`}
+                            subtitle={courtName}
+                            onClick={() => handleOnClick(dispute.id)}/>
+                    )
+                })
             }
         </SearchResult>
     );
