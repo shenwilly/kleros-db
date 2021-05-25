@@ -6,25 +6,6 @@ import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 import { ImFileText2 } from "react-icons/im";
-
-const LATEST_DISPUTES_GQL = gql`
-    query latestDisputes {
-        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
-            id
-            disputeID
-            subcourt {
-                id
-                children
-            }
-            period
-            ruled
-        }
-    }
-`;
-
-type Disputes = {
-    disputes: Dispute[];
-}
   
 const DisputePage: React.FC = () => {
     let dispute = {
@@ -88,6 +69,21 @@ const DisputePage: React.FC = () => {
         </Page>
     );
 };
+
+const DISPUTE_GQL = gql`
+    query latestDisputes {
+        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
+            id
+            disputeID
+            subcourt {
+                id
+                children
+            }
+            period
+            ruled
+        }
+    }
+`;
 
 const Card = styled.div.attrs({
     className: 'db br3 w-100 pa3 bg-white'

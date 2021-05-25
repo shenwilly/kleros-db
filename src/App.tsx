@@ -20,7 +20,7 @@ const client = new ApolloClient({
 
 const App: React.FC = () => {
   const { loaded } = useCourts(); // load court metadata
-  const loadingClassName = loaded == true ? "fade-out": "";
+  const loadingClassName = loaded === true ? "fade-out": "";
 
   return (
     <>

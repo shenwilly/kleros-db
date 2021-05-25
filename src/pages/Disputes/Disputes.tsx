@@ -3,29 +3,10 @@ import styled from "styled-components";
 import Page from "../../components/Page";
 import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
-import { Dispute } from "../../types/Dispute";
+import { Disputes } from "../../types/Dispute";
 import { Link } from "react-router-dom";
 
-const LATEST_DISPUTES_GQL = gql`
-    query latestDisputes {
-        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
-            id
-            disputeID
-            subcourt {
-                id
-                children
-            }
-            period
-            ruled
-        }
-    }
-`;
-
-type Disputes = {
-    disputes: Dispute[];
-}
-  
-const Disputes: React.FC = () => {
+const DisputesPage: React.FC = () => {
     const { loading, error, data } = useQuery<Disputes>(LATEST_DISPUTES_GQL);
     
     // if (loading) return <p>Loading...</p>;
@@ -37,7 +18,6 @@ const Disputes: React.FC = () => {
     return (
         <Page>
             <Title>Disputes</Title>
-            {/* <SearchInput placeholder="Search Dispute by ID  🔍" type="input"/> */}
             <SubTitle>
                 Latest Disputes
             </SubTitle>
@@ -45,7 +25,7 @@ const Disputes: React.FC = () => {
             <DisputeGrid>
                 {  
                     disputes.map((dispute) => (
-                        <StyledLink to="disputes/761">
+                        <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
                             <DisputeCard key={dispute.id} dispute={dispute}/>
                         </StyledLink>
                     ))
@@ -87,6 +67,20 @@ const Disputes: React.FC = () => {
         </Page>
     );
 };
+
+const LATEST_DISPUTES_GQL = gql`
+    query latestDisputes {
+        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
+            id
+            disputeID
+            subcourt {
+                id
+            }
+            period
+            ruled
+        }
+    }
+`;
 
 const Title = styled.div.attrs({
     className: 'f4'
@@ -147,4 +141,4 @@ const StyledLink = styled(Link).attrs({
     color: ${props => props.theme.textColor}
 `;
 
-export default Disputes;
+export default DisputesPage;

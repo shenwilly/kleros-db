@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Context from "./Context";
 import { useQuery, gql } from '@apollo/client';
 import { http } from "../../utils/http/http";
@@ -64,8 +64,6 @@ const Provider: React.FC = ({ children }) => {
     );
 };
 
-export default Provider;
-
 const COURT_POLICIES_GQL = gql`
     query courtPolicies {
       policies {
@@ -78,3 +76,5 @@ const COURT_POLICIES_GQL = gql`
 type Policies = {
   policies: Policy[];
 }
+
+export default Provider;

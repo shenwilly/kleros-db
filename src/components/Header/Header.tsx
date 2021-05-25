@@ -21,9 +21,11 @@ const Header: React.FC = () => {
             <NavMenu to="/about" label="About" active={currentPath === "/about"} />
             <Spacer />
 
-            <SearchProvider>
-                <SearchBar />
-            </SearchProvider>
+            <div className="mr4">
+                <SearchProvider>
+                    <SearchBar />
+                </SearchProvider>
+            </div>
         </HeaderGrid>
     );
 };

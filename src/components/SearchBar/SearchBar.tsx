@@ -16,7 +16,7 @@ const SearchBar: React.FC = () => {
     }, [query]);
     
     return (
-        <StyledContaner>
+        <StyledContainer>
             <SearchInput 
                 placeholder="Search Dispute by ID  🔍" 
                 type="input"
@@ -24,12 +24,12 @@ const SearchBar: React.FC = () => {
                 onChange={e => setQuery(e.target.value)}
                 />
             {showResult && <SearchBox/>}
-        </StyledContaner>
+        </StyledContainer>
     );
 };
 
 const SearchInput = styled.input.attrs({
-    className: 'mr4 w-100'
+    className: 'w-100'
 })` 
     min-width: 210px;
     max-width: 300px;
@@ -46,7 +46,7 @@ const SearchInput = styled.input.attrs({
     }
 `;
 
-const StyledContaner = styled.div`
+const StyledContainer = styled.div`
     position: relative;
 `;
 
