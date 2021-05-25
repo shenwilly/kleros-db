@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Context from "./Context";
 import { useLazyQuery, gql } from '@apollo/client';
-import { Disputes } from "../../types/Dispute";
+import { Dispute } from "../../types/Dispute";
 
 const Provider: React.FC = ({ children }) => {
     const [ query, setQuery ] = useState<string>("");
-    const [ getSearchResult, { loading, data }] = useLazyQuery<Disputes>(
+    const [ getSearchResult, { loading, data }] = useLazyQuery<DisputesGQLResult>(
         SEARCH_DISPUTES_GQL,
         { variables: { disputeID: query } }
     );
@@ -35,6 +35,9 @@ const Provider: React.FC = ({ children }) => {
     );
 };
 
+interface DisputesGQLResult {
+    disputes: Dispute[]
+}
 
 const SEARCH_DISPUTES_GQL = gql`
     query searchDisputes($disputeID: String!) {

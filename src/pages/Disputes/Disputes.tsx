@@ -3,11 +3,11 @@ import styled from "styled-components";
 import Page from "../../components/Page";
 import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
-import { Disputes } from "../../types/Dispute";
+import { Dispute } from "../../types/Dispute";
 import { Link } from "react-router-dom";
 
 const DisputesPage: React.FC = () => {
-    const { loading, error, data } = useQuery<Disputes>(LATEST_DISPUTES_GQL);
+    const { loading, error, data } = useQuery<DisputesGQLResult>(LATEST_DISPUTES_GQL);
     
     // if (loading) return <p>Loading...</p>;
     // if (error) return <p>Error :(</p>;
@@ -67,6 +67,10 @@ const DisputesPage: React.FC = () => {
         </Page>
     );
 };
+
+interface DisputesGQLResult {
+    disputes: Dispute[]
+}
 
 const LATEST_DISPUTES_GQL = gql`
     query latestDisputes {

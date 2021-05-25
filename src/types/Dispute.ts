@@ -18,8 +18,3 @@ export type Dispute = {
     // latestRound: BigInt!
     // rounds: [DisputeRound!] ! @derivedFrom(field: "dispute")
 }
-
-export type Disputes = {
-    disputes: Dispute[];
-}
-  
