@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
 import { useQuery, gql } from '@apollo/client';
@@ -8,7 +8,10 @@ import TimeDisplay from "../../components/TimeDisplay";
 import { ImFileText2 } from "react-icons/im";
 import { useParams } from "react-router-dom";
 import useCourts from "../../hooks/useCourts";
-  
+import Archon from "@kleros/archon";
+import { MetaEvidence } from "../../types/MetaEvidence";
+import { linkSync } from "fs";
+
 interface DisputePageParams {
     disputeID: string
 }
@@ -21,6 +24,8 @@ const DisputePage: React.FC = () => {
         { variables: { disputeID: disputeID } }
     );
     const dispute = data?.dispute;
+
+    const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidence>({} as MetaEvidence);
     
     let courtName: string = "";
     if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
@@ -30,25 +35,70 @@ const DisputePage: React.FC = () => {
         }
     }
     
+    useEffect(() => {
+        if (dispute) {
+            var archon = new Archon("https://mainnet.infura.io/v3/76e069e8df464e1ebfc1244368e2108b");
+            console.log(dispute)
+            archon.arbitrable.getDispute(
+                dispute.arbitrable?.id,
+                "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+                dispute.id,
+            ).then((disputeLog: any) => {
+                console.table(disputeLog)
+                archon.arbitrable.getMetaEvidence(
+                    dispute.arbitrable?.id, // arbitrable contract address
+                    disputeLog.metaEvidenceID
+                ).then((metaEvidenceData: any) => {
+                    setMetaEvidence(metaEvidenceData.metaEvidenceJSON)
+                    console.log(metaEvidenceData, "H??")
+                })
+            })
+        };
+    }, [dispute]);
+
+    const rulingResult = useCallback(() => {
+        if (!dispute || !metaEvidence) return "-";
+
+        const rulingOptionTitles = metaEvidence.rulingOptions?.titles;
+        if (!rulingOptionTitles || rulingOptionTitles?.length == 0) return "-";
+
+        return rulingOptionTitles[0]; //TODO
+    }, [dispute, metaEvidence]);
+
     return (
         <Page>
             <Card>
                 <Title>Dispute #{disputeID} - {courtName}</Title>
                 
-                <SubTitle>Proof of Humanity Registration Request</SubTitle>
-                <span>A request to register the specified entry to a list of provable humans.</span>
+                <SubTitle>{ metaEvidence?.title ||
+                    "Registration Request"}
+                </SubTitle>
+                <Paragraph>
+                    { metaEvidence?.description ||
+                        "A request to register an entry to a curated list."}
+                </Paragraph>
                 
                 <SubTitle>Question:</SubTitle>
-                <span>Should the request to register be accepted?</span>
+                <Paragraph>{ metaEvidence?.question ||
+                    "Should this request to register be accepted?"}
+                </Paragraph>
                 
                 <SubTitle>Choices:</SubTitle>
-                <span>Yes / No</span>
+                <ul>
+                    { metaEvidence?.rulingOptions?.titles.map((value, index) => {
+                        const title = value;
+                        const description = metaEvidence?.rulingOptions?.descriptions[index] ?? "";
+                        return <li>{title} - {description}</li>;
+                    })  
+                    || (<>
+                            <li>Yes</li>
+                            <li>No</li>
+                        </>)
+                    }
+                </ul>
 
-                <SubTitle>Answer:</SubTitle>
-                <span>Yes</span>
-
-                <SubTitle>Dispute Status:</SubTitle>
-                <span>Final</span>
+                <SubTitle>Result:</SubTitle>
+                <span>{rulingResult()}</span>
 
                 <SubTitle>Primary Document:</SubTitle>
                 <Circle>
@@ -90,6 +140,9 @@ const DISPUTE_GQL = gql`
             id
             disputeID
             subcourt {
+                id
+            }
+            arbitrable {
                 id
             }
             period
@@ -140,5 +193,9 @@ const CircleText = styled.div`
     margin: auto;
     color: white;
 `;
+
+const Paragraph = styled.div.attrs({
+    className: "db w-80"
+})``
 
 export default DisputePage;
