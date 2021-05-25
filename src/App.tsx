@@ -46,7 +46,7 @@ const App: React.FC = () => {
                 <Route exact path="/about">
                   <AboutPage />
                 </Route>
-                <Route exact path="/disputes/:id">
+                <Route exact path="/disputes/:disputeID">
                   <DisputePage />
                 </Route>
               </Switch>

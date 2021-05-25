@@ -6,23 +6,34 @@ import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 import { ImFileText2 } from "react-icons/im";
+import { useParams } from "react-router-dom";
+import useCourts from "../../hooks/useCourts";
   
+interface DisputePageParams {
+    disputeID: string
+}
+
 const DisputePage: React.FC = () => {
-    let dispute = {
-        id: "761"
+    let { disputeID } = useParams<DisputePageParams>();
+    const { subcourtToPolicy } = useCourts();
+    const { loading, error, data } = useQuery<DisputeGQLResult>(
+        DISPUTE_GQL,
+        { variables: { disputeID: disputeID } }
+    );
+    const dispute = data?.dispute;
+    
+    let courtName: string = "";
+    if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
+        courtName = subcourtToPolicy.get(dispute.subcourt.id)?.name ?? "";
+        if (courtName.length > 0 && !courtName.toLowerCase().includes("court")) {
+            courtName = courtName + " Court";
+        }
     }
-    // const { loading, error, data } = useQuery<Disputes>(LATEST_DISPUTES_GQL);
-    
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
-    
-    // const disputes = data?.disputes ?? [];
-    // console.log(disputes);
     
     return (
         <Page>
             <Card>
-                <Title>Dispute #761 - Humanity Court</Title>
+                <Title>Dispute #{disputeID} - {courtName}</Title>
                 
                 <SubTitle>Proof of Humanity Registration Request</SubTitle>
                 <span>A request to register the specified entry to a list of provable humans.</span>
@@ -44,7 +55,6 @@ const DisputePage: React.FC = () => {
                     <CircleText><ImFileText2 className="f4" /></CircleText>
                 </Circle>
 
-                
                 <FloatBoxTopRight>
                     <PeriodContainer period="Execution"/>
                     <div className="tr mt3">
@@ -56,13 +66,13 @@ const DisputePage: React.FC = () => {
                 <FloatBoxBottomRight>
                     <div className="tr mb2">Check case on:</div>
                     <div className="tr mb2">
-                        <a className="b" href={`https://court.kleros.io/cases/${dispute.id}`} target="blank">Court</a>
+                        <a className="b" href={`https://court.kleros.io/cases/${disputeID}`} target="blank">Court</a>
                     </div>
                     <div className="tr mb2">
-                        <a className="b" href={`http://klerosboard.com/dispute/?id=${dispute.id}`} target="blank">KlerosBoard</a>
+                        <a className="b" href={`http://klerosboard.com/dispute/?id=${disputeID}`} target="blank">KlerosBoard</a>
                     </div>
                     <div className="tr mb2">
-                        <a className="b" href={`https://klerosexplorer.com/case/${dispute.id}`} target="blank">KlerosExplorer</a>
+                        <a className="b" href={`https://klerosexplorer.com/case/${disputeID}`} target="blank">KlerosExplorer</a>
                     </div>
                 </FloatBoxBottomRight>
             </Card>
@@ -70,14 +80,17 @@ const DisputePage: React.FC = () => {
     );
 };
 
+interface DisputeGQLResult {
+    dispute: Dispute
+}
+
 const DISPUTE_GQL = gql`
-    query latestDisputes {
-        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
+    query getDispute($disputeID: String!) {
+        dispute(id: $disputeID) {
             id
             disputeID
             subcourt {
                 id
-                children
             }
             period
             ruled
