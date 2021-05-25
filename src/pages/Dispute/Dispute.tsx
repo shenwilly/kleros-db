@@ -6,6 +6,7 @@ import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 // import { ImFileText2 } from "react-icons/im";
+import { CgSpinner } from "react-icons/cg";
 import { useParams } from "react-router-dom";
 import useCourts from "../../hooks/useCourts";
 import Archon from "@kleros/archon";
@@ -25,6 +26,7 @@ const DisputePage: React.FC = () => {
     );
     const dispute = data?.dispute;
 
+    const [ evidenceLoading, setEvidenceLoading ] = useState<boolean>(true);
     const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidence>({} as MetaEvidence);
     const [ courtName, setCourtName ] = useState<string>("");
     const [ ruling, setRuling ] = useState<string>("");
@@ -48,6 +50,7 @@ const DisputePage: React.FC = () => {
                 ).then((metaEvidenceData: any) => {
                     setMetaEvidence(metaEvidenceData.metaEvidenceJSON)
                     console.log(metaEvidenceData, "H??")
+                    setEvidenceLoading(false);
                 })
             })
         };
@@ -80,6 +83,13 @@ const DisputePage: React.FC = () => {
 
         setRuling(rulingOptionTitles[0]); //TODO
     }, [dispute, metaEvidence]);
+
+    if (loading || evidenceLoading)
+        return (
+            <LoadingScreen>
+                <CgSpinner className="f1 rotate-center"/>
+            </LoadingScreen>
+        )
 
     return (
         <Page>
@@ -240,6 +250,12 @@ const StyledList = styled.ul.attrs({
     li {
         margin-bottom: 8px;
     }
+`
+
+const LoadingScreen = styled.div.attrs({
+    className: "w-100 h-100 flex items-center justify-center"
+})`
+    height: 70vh;
 `
 
 export default DisputePage;
