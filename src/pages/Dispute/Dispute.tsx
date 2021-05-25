@@ -6,7 +6,7 @@ import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 // import { ImFileText2 } from "react-icons/im";
-import { CgSpinner } from "react-icons/cg";
+import { CgNpm, CgSpinner } from "react-icons/cg";
 import { useParams } from "react-router-dom";
 import useCourts from "../../hooks/useCourts";
 import Archon from "@kleros/archon";
@@ -36,20 +36,26 @@ const DisputePage: React.FC = () => {
     
     useEffect(() => {
         if (dispute) {
+            setEvidenceLoading(true);
             var archon = new Archon(INFURA_ENDPOINT);
-            console.log(dispute)
+            // console.log(dispute)
             archon.arbitrable.getDispute(
                 dispute.arbitrable?.id,
                 KLEROS_COURT_ADDRESS,
                 dispute.id,
             ).then((disputeLog: any) => {
-                console.table(disputeLog)
+                // console.table(disputeLog)
                 archon.arbitrable.getMetaEvidence(
                     dispute.arbitrable?.id,
                     disputeLog.metaEvidenceID
                 ).then((metaEvidenceData: any) => {
-                    setMetaEvidence(metaEvidenceData.metaEvidenceJSON)
-                    console.log(metaEvidenceData, "H??")
+                    const result: MetaEvidence = metaEvidenceData.metaEvidenceJSON
+                    setMetaEvidence(result)
+
+                    if (result.fileURI && result.fileURI.length > 0) {
+                        setAppPolicyURI("https://ipfs.kleros.io" + result.fileURI) //temp
+                    }
+                    
                     setEvidenceLoading(false);
                 })
             })
@@ -90,6 +96,7 @@ const DisputePage: React.FC = () => {
                 <CgSpinner className="f1 rotate-center"/>
             </LoadingScreen>
         )
+    console.log(loading, evidenceLoading)
 
     return (
         <Page>
@@ -114,7 +121,7 @@ const DisputePage: React.FC = () => {
                     { metaEvidence?.rulingOptions?.titles.map((value, index) => {
                         const title = value;
                         const description = metaEvidence?.rulingOptions?.descriptions[index] ?? "";
-                        return <li key={index}>{title} - {description}</li>;
+                        return <li key={index}>{title}{ description.length > 0 ? ` - ${description}` : '' }</li>;
                     })  
                     || (<>
                             <li>Yes</li>
@@ -128,7 +135,8 @@ const DisputePage: React.FC = () => {
 
                 <SubTitle>Documents:</SubTitle>
                 <StyledList>
-                    <li><a href={appPolicyURI} target="blank">App Policy</a></li>
+                    { appPolicyURI.length > 0 && 
+                        <li><a href={appPolicyURI} target="blank">App Policy</a></li>}
                     <li><a href={courtMetadataURI} target="blank">Court Metadata</a></li>
                     { submissionURI.length > 0 &&
                         <li><a href={submissionURI} target="blank">Submission</a></li>}
