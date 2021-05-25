@@ -2,20 +2,20 @@ import React, { useState, useEffect } from "react";
 import Context from "./Context";
 import { useQuery, gql } from '@apollo/client';
 import { http } from "../../utils/http/http";
-import { Policy } from "../../types/Policy";
+import { Policy, PolicyData } from "../../types/Policy";
 
 const Provider: React.FC = ({ children }) => {
     const [ loaded, setLoaded ] = useState(false);
     const [ subcourtToPolicy, setSubcourtToPolicy ] = useState(new Map());
     const policyQuery = useQuery<Policies>(COURT_POLICIES_GQL);
-    const policyData = policyQuery.data;
+    const policyQueryData = policyQuery.data;
 
     useEffect(() => {
       const fetchPolicies = async() => {
-          let newSubcourtToPolicy: Map<string, string> = new Map();
+          let newSubcourtToPolicy: Map<string, PolicyData> = new Map();
 
           let promises: any[] = []
-          policyData?.policies.forEach((policyData) => {
+          policyQueryData?.policies.forEach((policyData) => {
             const uri = policyData.policy
             let url: string;
             if (uri.includes("http")) {
@@ -25,8 +25,9 @@ const Provider: React.FC = ({ children }) => {
             }
 
             const subcourtID = policyData.subcourtID
-            promises.push(http(url).then(response => {
-              newSubcourtToPolicy.set(subcourtID, response);
+            promises.push(http(url).then((policyData: PolicyData) => {
+              policyData.uri = url;
+              newSubcourtToPolicy.set(subcourtID, policyData);
             }));
           })
           
@@ -48,10 +49,10 @@ const Provider: React.FC = ({ children }) => {
       //   return;
       // }
 
-      if (policyData) {
+      if (policyQueryData) {
         fetchPolicies()
       }
-    }, [policyData]);
+    }, [policyQueryData]);
 
     return (
         <Context.Provider

@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
 import { useQuery, gql } from '@apollo/client';
 import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
-import { ImFileText2 } from "react-icons/im";
+// import { ImFileText2 } from "react-icons/im";
 import { useParams } from "react-router-dom";
 import useCourts from "../../hooks/useCourts";
 import Archon from "@kleros/archon";
 import { MetaEvidence } from "../../types/MetaEvidence";
-import { linkSync } from "fs";
+import { KLEROS_COURT_ADDRESS, INFURA_ENDPOINT } from "../../utils/constants/address";
 
 interface DisputePageParams {
     disputeID: string
@@ -19,34 +19,31 @@ interface DisputePageParams {
 const DisputePage: React.FC = () => {
     let { disputeID } = useParams<DisputePageParams>();
     const { subcourtToPolicy } = useCourts();
-    const { loading, error, data } = useQuery<DisputeGQLResult>(
+    const { loading, data } = useQuery<DisputeGQLResult>(
         DISPUTE_GQL,
         { variables: { disputeID: disputeID } }
     );
     const dispute = data?.dispute;
 
     const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidence>({} as MetaEvidence);
-    
-    let courtName: string = "";
-    if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-        courtName = subcourtToPolicy.get(dispute.subcourt.id)?.name ?? "";
-        if (courtName.length > 0 && !courtName.toLowerCase().includes("court")) {
-            courtName = courtName + " Court";
-        }
-    }
+    const [ courtName, setCourtName ] = useState<string>("");
+    const [ ruling, setRuling ] = useState<string>("");
+    const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
+    const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
+    const [ submissionURI, setSubmissionURI ] = useState<string>("");
     
     useEffect(() => {
         if (dispute) {
-            var archon = new Archon("https://mainnet.infura.io/v3/76e069e8df464e1ebfc1244368e2108b");
+            var archon = new Archon(INFURA_ENDPOINT);
             console.log(dispute)
             archon.arbitrable.getDispute(
                 dispute.arbitrable?.id,
-                "0x988b3a538b618c7a603e1c11ab82cd16dbe28069",
+                KLEROS_COURT_ADDRESS,
                 dispute.id,
             ).then((disputeLog: any) => {
                 console.table(disputeLog)
                 archon.arbitrable.getMetaEvidence(
-                    dispute.arbitrable?.id, // arbitrable contract address
+                    dispute.arbitrable?.id,
                     disputeLog.metaEvidenceID
                 ).then((metaEvidenceData: any) => {
                     setMetaEvidence(metaEvidenceData.metaEvidenceJSON)
@@ -56,13 +53,32 @@ const DisputePage: React.FC = () => {
         };
     }, [dispute]);
 
-    const rulingResult = useCallback(() => {
-        if (!dispute || !metaEvidence) return "-";
+    useEffect(() => {
+        if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
+            const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
+            setCourtMetadataURI(subcourtPolicy?.uri ?? "");
+
+            let name = subcourtPolicy?.name ?? "";
+            if (name.length > 0 && !name.toLowerCase().includes("court")) {
+                name = name + " Court";
+            }
+            setCourtName(name);
+        }
+    }, [dispute]);
+
+    useEffect(() => {
+        if (!dispute || !metaEvidence) {
+            setRuling("-");
+            return;
+        }
 
         const rulingOptionTitles = metaEvidence.rulingOptions?.titles;
-        if (!rulingOptionTitles || rulingOptionTitles?.length == 0) return "-";
+        if (!rulingOptionTitles || rulingOptionTitles?.length == 0) {
+            setRuling("-");
+            return;
+        };
 
-        return rulingOptionTitles[0]; //TODO
+        setRuling(rulingOptionTitles[0]); //TODO
     }, [dispute, metaEvidence]);
 
     return (
@@ -84,26 +100,43 @@ const DisputePage: React.FC = () => {
                 </Paragraph>
                 
                 <SubTitle>Choices:</SubTitle>
-                <ul>
+                <StyledList>
                     { metaEvidence?.rulingOptions?.titles.map((value, index) => {
                         const title = value;
                         const description = metaEvidence?.rulingOptions?.descriptions[index] ?? "";
-                        return <li>{title} - {description}</li>;
+                        return <li key={index}>{title} - {description}</li>;
                     })  
                     || (<>
                             <li>Yes</li>
                             <li>No</li>
                         </>)
                     }
-                </ul>
+                </StyledList>
 
                 <SubTitle>Result:</SubTitle>
-                <span>{rulingResult()}</span>
+                <span>{ruling}</span>
 
-                <SubTitle>Primary Document:</SubTitle>
-                <Circle>
-                    <CircleText><ImFileText2 className="f4" /></CircleText>
-                </Circle>
+                <SubTitle>Documents:</SubTitle>
+                <StyledList>
+                    <li><a href={appPolicyURI} target="blank">App Policy</a></li>
+                    <li><a href={courtMetadataURI} target="blank">Court Metadata</a></li>
+                    { submissionURI.length > 0 &&
+                        <li><a href={submissionURI} target="blank">Submission</a></li>}
+                </StyledList>
+                {/* <div className="flex">
+                    <span className="mr2 tc">
+                        <Circle>
+                            <CircleText><ImFileText2 className="f4" /></CircleText>
+                        </Circle>
+                        <div className="mt1 f6">Policy</div>
+                    </span>
+                    <span className="mr2 tc">
+                        <Circle>
+                            <CircleText><ImFileText2 className="f4" /></CircleText>
+                        </Circle>
+                        <div className="mt1 f6">Submission</div>
+                    </span>
+                </div> */}
 
                 <FloatBoxTopRight>
                     <PeriodContainer period="Execution"/>
@@ -180,22 +213,33 @@ const FloatBoxBottomRight = styled.div.attrs({
     className: 'absolute bottom-1 right-1'
 })``;
 
-const Circle = styled.div.attrs({
-    className: 'flex pointer'
-})`
-    width: 50px;
-    height: 50px;
-    background-color: ${props => props.theme.purplePrimary};
-    border-radius: 50%;
-`;
+// const Circle = styled.div.attrs({
+//     className: 'flex pointer'
+// })`
+//     width: 50px;
+//     height: 50px;
+//     background-color: ${props => props.theme.purplePrimary};
+//     border-radius: 50%;
+// `;
 
-const CircleText = styled.div`
-    margin: auto;
-    color: white;
-`;
+// const CircleText = styled.div`
+//     margin: auto;
+//     color: white;
+// `;
 
 const Paragraph = styled.div.attrs({
     className: "db w-80"
 })``
+
+const StyledList = styled.ul.attrs({
+
+})`
+    margin: 0;
+    padding-inline-start: 25px;
+
+    li {
+        margin-bottom: 8px;
+    }
+`
 
 export default DisputePage;
