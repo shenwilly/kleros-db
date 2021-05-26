@@ -21,13 +21,13 @@ const NavMenu: React.FC<NavMenuProps> = ({ label, to, active }) => {
 };
 
 const Menu = styled.span.attrs({
-    className: 'dn db-gt-xs mr4 pointer'
+    className: 'mr4 pointer'
 })`
     text-decoration: none! important;
 `;
 
 const SelectedMenu = styled.span.attrs({
-    className: 'dn db-gt-xs mr4 b underline pointer'
+    className: 'mr4 b underline pointer'
 })``;
 
 const NavLink = styled(Link).attrs({

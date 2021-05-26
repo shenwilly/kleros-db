@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Spacer from "../Spacer";
 import { Dispute } from "../../types/Dispute";
-import useCourts from "../../hooks/useCourts";
+import useCourtPolicy from "../../hooks/useCourtPolicy";
 import PeriodContainer from "../PeriodContainer";
 import TimeDisplay from "../TimeDisplay";
 import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
@@ -12,7 +12,7 @@ interface DisputeCardProp {
 }
 
 const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
-    const { subcourtToPolicy } = useCourts();
+    const { subcourtToPolicy } = useCourtPolicy();
     const [ courtName, setCourtName ] = useState<string>("");
     const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
 

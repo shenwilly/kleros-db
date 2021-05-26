@@ -6,13 +6,13 @@ import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 import { useParams } from "react-router-dom";
-import useCourts from "../../hooks/useCourts";
-import Archon from "@kleros/archon";
+import useCourtPolicy from "../../hooks/useCourtPolicy";
 import { MetaEvidenceJSON } from "../../types/MetaEvidence";
-import { KLEROS_COURT_ADDRESS, INFURA_ENDPOINT } from "../../utils/constants/address";
+import { KLEROS_COURT_ADDRESS } from "../../utils/constants/address";
 import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
 import EvidenceDisplay from "../../components/EvidenceDisplay";
 import Spinner from "../../components/Spinner";
+import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI, getRulingEventLog } from "../../utils/kleros-helpers/archon";
 
 interface DisputePageParams {
     disputeID: string
@@ -20,7 +20,7 @@ interface DisputePageParams {
 
 const DisputePage: React.FC = () => {
     let { disputeID } = useParams<DisputePageParams>();
-    const { subcourtToPolicy } = useCourts();
+    const { subcourtToPolicy } = useCourtPolicy();
     const { loading, data } = useQuery<DisputeGQLResult>(
         DISPUTE_GQL,
         { variables: { disputeID: disputeID } }
@@ -37,40 +37,28 @@ const DisputePage: React.FC = () => {
     const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
     
     useEffect(() => {
+        const fetchMetaEvidence = async () => {
+            const arbitrable = dispute?.arbitrable?.id;
+            const disputeEventLog = await getDisputeEventLog(dispute?.id!, arbitrable!);
+            const metaEvidenceEventLog = await getMetaEvidenceEventLog(disputeEventLog.metaEvidenceID, arbitrable!);
+
+            const metaEvidenceJSON = metaEvidenceEventLog.metaEvidenceJSON
+            setMetaEvidence(metaEvidenceJSON)
+
+            if (metaEvidenceJSON.fileURI && metaEvidenceJSON.fileURI.length > 0) {
+                setAppPolicyURI(getIpfsFullURI(metaEvidenceJSON.fileURI))
+            }
+
+            if (metaEvidenceJSON.evidenceDisplayInterfaceURI && metaEvidenceJSON.evidenceDisplayInterfaceURI.length > 0) {
+                setEvidenceDisplayInterfaceURI(getIpfsFullURI(metaEvidenceJSON.evidenceDisplayInterfaceURI))
+            }
+            
+            setEvidenceLoading(false);
+        };
+
         if (dispute) {
             setEvidenceLoading(true);
-            var archon = new Archon(INFURA_ENDPOINT);
-
-            // fetch metaevidence
-            archon.arbitrable.getDispute(
-                dispute.arbitrable?.id,
-                KLEROS_COURT_ADDRESS,
-                dispute.id,
-            ).then((disputeLog: any) => {
-                // console.table(disputeLog)
-                archon.arbitrable.getMetaEvidence(
-                    dispute.arbitrable?.id,
-                    disputeLog.metaEvidenceID
-                ).then((metaEvidenceData: any) => {
-                    const result: MetaEvidenceJSON = metaEvidenceData.metaEvidenceJSON
-                    setMetaEvidence(result)
-
-                    if (result.fileURI && result.fileURI.length > 0) {
-                        setAppPolicyURI("https://ipfs.kleros.io" + result.fileURI) //temp
-                    }
-
-                    if (result.evidenceDisplayInterfaceURI && result.evidenceDisplayInterfaceURI.length > 0) {
-                        let interfaceURL = result.evidenceDisplayInterfaceURI
-                        if (!interfaceURL.includes("http")) {
-                            interfaceURL = "https://ipfs.kleros.io" + interfaceURL;
-                        }
-                        setEvidenceDisplayInterfaceURI(interfaceURL) //temp
-                    }
-                    
-                    // console.log(result)
-                    setEvidenceLoading(false);
-                })
-            })
+            fetchMetaEvidence();
         };
     }, [dispute]);
 
@@ -93,6 +81,12 @@ const DisputePage: React.FC = () => {
     }, [dispute, subcourtToPolicy]);
 
     useEffect(() => {
+        const fetchRuling = async (dispute: Dispute, options: string[]) => {
+            const rulingEventLog = await getRulingEventLog(dispute.id, dispute.arbitrable?.id!)
+            const ruling = Number(rulingEventLog.ruling) - 1;
+            setRuling(options[ruling]);
+        }
+
         if (!dispute || !metaEvidence) {
             setRuling("-");
             return;
@@ -105,14 +99,7 @@ const DisputePage: React.FC = () => {
         };
 
         if (dispute.ruled === true) {
-            // temp
-            var archon = new Archon(INFURA_ENDPOINT);
-            archon.arbitrable.getRuling(
-                dispute.arbitrable?.id, KLEROS_COURT_ADDRESS, dispute.id
-            ).then((rulingResponse: any) => {
-                const ruling = Number(rulingResponse.ruling) - 1;
-                setRuling(rulingOptionTitles[ruling]); //TODO
-            });
+            fetchRuling(dispute, rulingOptionTitles);
         }
     }, [dispute, metaEvidence]);
 

@@ -9,17 +9,18 @@ import AboutPage from "./pages/About";
 import DisputePage from "./pages/Dispute";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
-import { CourtsProvider } from './contexts/Courts';
-import useCourts from "./hooks/useCourts";
+import { CourtPolicyProvider } from './contexts/CourtPolicy';
+import useCourtPolicy from "./hooks/useCourtPolicy";
 import Spinner from "./components/Spinner";
+import { KLEROS_SUBGRAPH_ENDPOINT } from "./utils/constants/address";
 
 const client = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/shenwilly/kleros-liquid',
+  uri: KLEROS_SUBGRAPH_ENDPOINT,
   cache: new InMemoryCache()
 });
 
 const App: React.FC = () => {
-  const { loaded } = useCourts(); // load court metadata
+  const { loaded } = useCourtPolicy(); // load court metadata
   const loadingClassName = loaded === true ? "fade-out": "";
 
   return (
@@ -30,26 +31,26 @@ const App: React.FC = () => {
             <Header/>
           </HeaderWrapper>
           <PageWrapper>
-                <Switch>
-                  <Route exact path="/">
-                    <DisputesPage />
-                  </Route>
-                  <Route exact path="/disputes">
-                    <DisputesPage />
-                  </Route>
-                  <Route exact path="/courts">
-                    <CourtsPage />
-                  </Route>
-                  <Route exact path="/apps">
-                    <AppsPage />
-                  </Route>
-                  <Route exact path="/about">
-                    <AboutPage />
-                  </Route>
-                  <Route exact path="/disputes/:disputeID">
-                    <DisputePage />
-                  </Route>
-                </Switch>
+            <Switch>
+              <Route exact path="/">
+                <DisputesPage />
+              </Route>
+              <Route exact path="/disputes">
+                <DisputesPage />
+              </Route>
+              <Route exact path="/courts">
+                <CourtsPage />
+              </Route>
+              <Route exact path="/apps">
+                <AppsPage />
+              </Route>
+              <Route exact path="/about">
+                <AboutPage />
+              </Route>
+              <Route exact path="/disputes/:disputeID">
+                <DisputePage />
+              </Route>
+            </Switch>
           </PageWrapper>
         </Router>
       </SiteWrapper>
@@ -86,9 +87,9 @@ const Providers: React.FC = ({ children }) => {
     <>
       <ThemeProvider theme={theme}>
         <ApolloProvider client={client}>
-          <CourtsProvider>
+          <CourtPolicyProvider>
             {children}
-          </CourtsProvider>
+          </CourtPolicyProvider>
         </ApolloProvider>
       </ThemeProvider>
     </>
