@@ -31,26 +31,26 @@ const App: React.FC = () => {
             <Header/>
           </HeaderWrapper>
           <PageWrapper>
-                <Switch>
-                  <Route exact path="/">
-                    <DisputesPage />
-                  </Route>
-                  <Route exact path="/disputes">
-                    <DisputesPage />
-                  </Route>
-                  <Route exact path="/courts">
-                    <CourtsPage />
-                  </Route>
-                  <Route exact path="/apps">
-                    <AppsPage />
-                  </Route>
-                  <Route exact path="/about">
-                    <AboutPage />
-                  </Route>
-                  <Route exact path="/disputes/:disputeID">
-                    <DisputePage />
-                  </Route>
-                </Switch>
+            <Switch>
+              <Route exact path="/">
+                <DisputesPage />
+              </Route>
+              <Route exact path="/disputes">
+                <DisputesPage />
+              </Route>
+              <Route exact path="/courts">
+                <CourtsPage />
+              </Route>
+              <Route exact path="/apps">
+                <AppsPage />
+              </Route>
+              <Route exact path="/about">
+                <AboutPage />
+              </Route>
+              <Route exact path="/disputes/:disputeID">
+                <DisputePage />
+              </Route>
+            </Switch>
           </PageWrapper>
         </Router>
       </SiteWrapper>
