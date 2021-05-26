@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Spacer from "../Spacer";
 import { Dispute } from "../../types/Dispute";
 import useCourts from "../../hooks/useCourts";
 import PeriodContainer from "../PeriodContainer";
 import TimeDisplay from "../TimeDisplay";
+import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
 
 interface DisputeCardProp {
     dispute?: Dispute,
@@ -12,14 +13,27 @@ interface DisputeCardProp {
 
 const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
     const { subcourtToPolicy } = useCourts();
-    let courtName: string = "";
+    const [ courtName, setCourtName ] = useState<string>("");
+    const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
 
-    if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-        courtName = subcourtToPolicy.get(dispute.subcourt.id)?.name ?? "";
-        if (courtName.length > 0 && !courtName.toLowerCase().includes("court")) {
-            courtName = courtName + " Court";
+    useEffect(() => {
+        if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
+            const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
+
+            let name = subcourtPolicy?.name ?? "";
+            if (name.length > 0 && !name.toLowerCase().includes("court")) {
+                name = name + " Court";
+            }
+            setCourtName(name);
         }
-    }
+    }, [dispute]);
+
+    useEffect(() => {
+        if (dispute) {
+            const duration = getTimeUntilNextPeriod(dispute);
+            setTimeUntilNextPeriod(duration);
+        }
+    }, [dispute]);
     
     return (
         <>
@@ -37,7 +51,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
                             <div>
                                 Next period in:
                             </div>
-                            <TimeDisplay duration="3 days"/>
+                            <TimeDisplay duration={timeUntilNextPeriod}/>
                         </div>
                     </CardBottomRow>
                     <CardBottomRowMobile>
@@ -48,7 +62,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
                             <div>
                                 Next period in:
                             </div>
-                            <TimeDisplay duration="3 days"/>
+                            <TimeDisplay duration={timeUntilNextPeriod}/>
                         </div>
                     </CardBottomRowMobile>
                 </Card>

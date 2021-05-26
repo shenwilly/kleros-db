@@ -3,16 +3,16 @@ import { Court } from "./Court";
 
 export type Dispute = {
     id: string;
-    disputeID: BigInteger;
+    disputeID: string;
 
     arbitrable?: Arbitrable;
     subcourt?: Court;
     
-    numberOfChoices?: BigInteger;
+    numberOfChoices?: string;
     period?: Period;
-    lastPeriodChange?: BigInteger;
-    drawsInRound?: BigInteger;
-    commitsInRound?: BigInteger;
+    lastPeriodChange?: string;
+    drawsInRound?: string;
+    commitsInRound?: string;
     ruled?: boolean;
 
     // latestRound: BigInt!
@@ -24,6 +24,6 @@ export enum Period {
     Commit = "Commit",
     Vote = "Vote",
     Appeal = "Appeal",
-    Execution = "Execution",
+    Execution = "Execution"
 }
   

@@ -12,6 +12,7 @@ import useCourts from "../../hooks/useCourts";
 import Archon from "@kleros/archon";
 import { MetaEvidence } from "../../types/MetaEvidence";
 import { KLEROS_COURT_ADDRESS, INFURA_ENDPOINT } from "../../utils/constants/address";
+import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
 
 interface DisputePageParams {
     disputeID: string
@@ -30,6 +31,7 @@ const DisputePage: React.FC = () => {
     const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidence>({} as MetaEvidence);
     const [ courtName, setCourtName ] = useState<string>("");
     const [ ruling, setRuling ] = useState<string>("");
+    const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
     const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
     const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
     const [ submissionURI, setSubmissionURI ] = useState<string>("");
@@ -63,15 +65,20 @@ const DisputePage: React.FC = () => {
     }, [dispute]);
 
     useEffect(() => {
-        if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-            const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
-            setCourtMetadataURI(subcourtPolicy?.uri ?? "");
+        if (dispute) {
+            const duration = getTimeUntilNextPeriod(dispute);
+            setTimeUntilNextPeriod(duration);
 
-            let name = subcourtPolicy?.name ?? "";
-            if (name.length > 0 && !name.toLowerCase().includes("court")) {
-                name = name + " Court";
+            if (dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
+                const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
+                setCourtMetadataURI(subcourtPolicy?.uri ?? "");
+
+                let name = subcourtPolicy?.name ?? "";
+                if (name.length > 0 && !name.toLowerCase().includes("court")) {
+                    name = name + " Court";
+                }
+                setCourtName(name);
             }
-            setCourtName(name);
         }
     }, [dispute]);
 
@@ -162,7 +169,7 @@ const DisputePage: React.FC = () => {
                     <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
                     <div className="tr mt3">
                         <div>Next period in:</div>
-                        <TimeDisplay duration="3 days"/>
+                        <TimeDisplay duration={timeUntilNextPeriod}/>
                     </div>
                 </FloatBoxTopRight>
 
@@ -194,10 +201,12 @@ const DISPUTE_GQL = gql`
             disputeID
             subcourt {
                 id
+                timesPerPeriod
             }
             arbitrable {
                 id
             }
+            lastPeriodChange
             period
             ruled
         }

@@ -79,7 +79,9 @@ const LATEST_DISPUTES_GQL = gql`
             disputeID
             subcourt {
                 id
+                timesPerPeriod
             }
+            lastPeriodChange
             period
             ruled
         }
