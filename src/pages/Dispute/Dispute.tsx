@@ -40,7 +40,8 @@ const DisputePage: React.FC = () => {
         if (dispute) {
             setEvidenceLoading(true);
             var archon = new Archon(INFURA_ENDPOINT);
-            // console.log(dispute)
+
+            // fetch metaevidence
             archon.arbitrable.getDispute(
                 dispute.arbitrable?.id,
                 KLEROS_COURT_ADDRESS,
@@ -57,7 +58,7 @@ const DisputePage: React.FC = () => {
                     if (result.fileURI && result.fileURI.length > 0) {
                         setAppPolicyURI("https://ipfs.kleros.io" + result.fileURI) //temp
                     }
-                    
+                    // console.log(metaEvidenceData)
                     setEvidenceLoading(false);
                 })
             })
@@ -88,16 +89,23 @@ const DisputePage: React.FC = () => {
             return;
         }
 
-        // dispute.period = ;
-        console.log(dispute, "!?", Period.Commit)
-
         const rulingOptionTitles = metaEvidence.rulingOptions?.titles;
         if (!rulingOptionTitles || rulingOptionTitles?.length == 0) {
             setRuling("-");
             return;
         };
 
-        setRuling(rulingOptionTitles[0]); //TODO
+        if (dispute.ruled === true) {
+            // temp
+            var archon = new Archon(INFURA_ENDPOINT);
+            archon.arbitrable.getRuling(
+                dispute.arbitrable?.id, KLEROS_COURT_ADDRESS, dispute.id
+            ).then((rulingResponse: any) => {
+                const ruling = Number(rulingResponse.ruling) - 1;
+                console.log(ruling, "!?");
+                setRuling(rulingOptionTitles[ruling]); //TODO
+            });
+        }
     }, [dispute, metaEvidence]);
 
     if (loading || evidenceLoading)
