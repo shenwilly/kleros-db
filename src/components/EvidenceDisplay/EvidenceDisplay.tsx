@@ -37,7 +37,7 @@ const StyledContainer = styled.div`
 const StyledIFrame = styled.iframe.attrs({
     className: "w-100 ba br3 mt1"
 })`
-    border-color: purple;
+    border-color: ${props => props.theme.purpleLight};
 `
 
 const LoadingScreen = styled.div.attrs({

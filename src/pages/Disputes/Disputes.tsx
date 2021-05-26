@@ -5,15 +5,12 @@ import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
 import { Dispute } from "../../types/Dispute";
 import { Link } from "react-router-dom";
+import Spinner from "../../components/Spinner";
 
 const DisputesPage: React.FC = () => {
     const { loading, error, data } = useQuery<DisputesGQLResult>(LATEST_DISPUTES_GQL);
     
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
-    
     const disputes = data?.disputes ?? [];
-    console.log(disputes);
     
     return (
         <Page>
@@ -22,48 +19,20 @@ const DisputesPage: React.FC = () => {
                 Latest Disputes
             </SubTitle>
 
-            <DisputeGrid>
-                {  
-                    disputes.map((dispute) => (
-                        <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
-                            <DisputeCard key={dispute.id} dispute={dispute}/>
-                        </StyledLink>
-                    ))
-                }
-            </DisputeGrid>
-
-            <FullBox>
-                {/* <table className="w-100 tr pa2">
-                    <thead>
-                        <tr>
-                            <th className="tl w-30">Name</th>
-                            <th>Liquidity</th>
-                            <th>Volume (24hrs)</th>
-                            <th>Volume (7d)</th>
-                            <th>Fees (24hr)</th>
-                            <th>1y Fees / Liquidity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td className="tl">Name</td>
-                            <td>Liquidity</td>
-                            <td>Volume (24hrs)</td>
-                            <td>Volume (7d)</td>
-                            <td>Fees (24hr)</td>
-                            <td>1y Fees / Liquidity</td>
-                        </tr>
-                        <tr>
-                            <td className="tl">Name</td>
-                            <td>Liquidity</td>
-                            <td>Volume (24hrs)</td>
-                            <td>Volume (7d)</td>
-                            <td>Fees (24hr)</td>
-                            <td>1y Fees / Liquidity</td>
-                        </tr>
-                    </tbody>
-                </table> */}
-            </FullBox>
+            {loading && 
+                <LoadingScreen> 
+                    <Spinner/>
+                </LoadingScreen>}
+            {!loading && 
+                <DisputeGrid>
+                    {  
+                        disputes.map((dispute) => (
+                            <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
+                                <DisputeCard key={dispute.id} dispute={dispute}/>
+                            </StyledLink>
+                        ))
+                    }
+                </DisputeGrid>}
         </Page>
     );
 };
@@ -96,46 +65,16 @@ const SubTitle = styled.div.attrs({
     className: 'mv3'
 })``;
 
-const SearchInput = styled.input.attrs({
-    className: 'mt3 mb3 w-100 pv3'
-})`
-    width: 100%;
-    text-indent: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: rgba(250, 250, 250, 0.7);
-    -webkit-box-shadow: 0px 6px 17px 1px rgba(0,0,0,0.2); 
-    box-shadow: 0px 6px 15px 1px rgba(0,0,0,0.15);
+// interface ClassNameProps {
+//     className?: string;
+// }
 
-    :focus-visible {
-        outline: none;
-    }
-`;
-
-const StatLabel = styled.span.attrs({
-    className: 'f5 mr3'
-})``;
-
-interface ClassNameProps {
-    className?: string;
-}
-
-const HalfBox = styled.div.attrs<ClassNameProps>(props => ({
-    className: `dib h-100 w-100 w-50-gt-xs ${props.className}`
-}))`
-    height: '80px';
-    border-radius: 8px;
-`;
-
-const WhiteBox = styled.div.attrs<ClassNameProps>(props => ({
-    className: `bg-white br4 h-100 ${props.className}`
-}))``;
-
-const FullBox = styled.div.attrs({
-    className: 'dib w-100 bg-white'
-})`
-    border-radius: 8px;
-`;
+// const HalfBox = styled.div.attrs<ClassNameProps>(props => ({
+//     className: `dib h-100 w-100 w-50-gt-xs ${props.className}`
+// }))`
+//     height: '80px';
+//     border-radius: 8px;
+// `;
 
 const DisputeGrid = styled.div.attrs({
     className: 'db w-100'
@@ -146,5 +85,11 @@ const StyledLink = styled(Link).attrs({
 })`
     color: ${props => props.theme.textColor}
 `;
+
+const LoadingScreen = styled.div.attrs({
+    className: "w-100 h-100 flex items-center justify-center"
+})`
+    height: 50vh;
+`
 
 export default DisputesPage;

@@ -111,13 +111,13 @@ const DisputePage: React.FC = () => {
                 dispute.arbitrable?.id, KLEROS_COURT_ADDRESS, dispute.id
             ).then((rulingResponse: any) => {
                 const ruling = Number(rulingResponse.ruling) - 1;
-                console.log(ruling, "!?");
                 setRuling(rulingOptionTitles[ruling]); //TODO
             });
         }
     }, [dispute, metaEvidence]);
 
-    if (loading || evidenceLoading)
+    // if (loading || evidenceLoading)
+    if (loading)
         return (
             <LoadingScreen>
                 <Spinner/>
@@ -129,47 +129,69 @@ const DisputePage: React.FC = () => {
             <Card>
                 <Title>Dispute #{disputeID} - {courtName}</Title>
                 
-                <SubTitle>{ metaEvidence?.title ||
-                    "Registration Request"}
-                </SubTitle>
-                <Paragraph>
-                    { metaEvidence?.description ||
-                        "A request to register an entry to a curated list."}
-                </Paragraph>
-                
-                <SubTitle>Question:</SubTitle>
-                <Paragraph>{ metaEvidence?.question ||
-                    "Should this request to register be accepted?"}
-                </Paragraph>
+                <DisputeDetailContainer>
+                    <SubTitle>{ metaEvidence?.title ||
+                        "Registration Request"}
+                    </SubTitle>
+                    <Paragraph>
+                        { metaEvidence?.description ||
+                            "A request to register an entry to a curated list."}
+                    </Paragraph>
+                    
+                    <SubTitle>Question:</SubTitle>
+                    <Paragraph>{ metaEvidence?.question ||
+                        "Should this request to register be accepted?"}
+                    </Paragraph>
 
-                <SubTitle>Choices:</SubTitle>
-                <StyledList>
-                    { metaEvidence?.rulingOptions?.titles.map((value, index) => {
-                        const title = value;
-                        const description = metaEvidence?.rulingOptions?.descriptions[index] ?? "";
-                        return <li key={index}>{title}{ description.length > 0 ? ` - ${description}` : '' }</li>;
-                    })  
-                    || (<>
-                            <li>Yes</li>
-                            <li>No</li>
-                        </>)
-                    }
-                </StyledList>
+                    <SubTitle>Choices:</SubTitle>
+                    <StyledList>
+                        { metaEvidence?.rulingOptions?.titles.map((value, index) => {
+                            const title = value;
+                            const description = metaEvidence?.rulingOptions?.descriptions[index] ?? "";
+                            return <li key={index}>{title}{ description.length > 0 ? ` - ${description}` : '' }</li>;
+                        })  
+                        || (<>
+                                <li>Yes</li>
+                                <li>No</li>
+                            </>)
+                        }
+                    </StyledList>
 
-                <SubTitle>Result:</SubTitle>
-                <span>{ruling}</span>
+                    <SubTitle>Result:</SubTitle>
+                    <span>{ruling}</span>
+
+                    {evidenceLoading && 
+                        <GlassLoadingScreen>
+                            <Spinner />
+                        </GlassLoadingScreen>}
+                </DisputeDetailContainer>
 
                 <SubTitle>Documents:</SubTitle>
-                <StyledList>
-                    { appPolicyURI.length > 0 && 
-                        <li><a href={appPolicyURI} target="blank">App Policy</a></li>}
-                    <li><a href={courtMetadataURI} target="blank">Court Metadata</a></li>
-                </StyledList>
+                <div className="w-100 relative">
+                    <StyledList>
+                        { appPolicyURI.length > 0 && 
+                            <li><a href={appPolicyURI} target="blank">App Policy</a></li>}
+                        <li><a href={courtMetadataURI} target="blank">Court Metadata</a></li>
+                    </StyledList>
+
+                    <FloatBoxBottomRight>
+                        <div className="tr mb2">Check case on:</div>
+                        <div className="tr mb2">
+                            <a className="b" href={`https://court.kleros.io/cases/${disputeID}`} target="blank">Court</a>
+                        </div>
+                        <div className="tr mb2">
+                            <a className="b" href={`http://klerosboard.com/dispute/?id=${disputeID}`} target="blank">KlerosBoard</a>
+                        </div>
+                        <div className="tr mb2">
+                            <a className="b" href={`https://klerosexplorer.com/case/${disputeID}`} target="blank">KlerosExplorer</a>
+                        </div>
+                    </FloatBoxBottomRight>
+                </div>
 
                 {evidenceDisplayInterfaceURI.length > 0 && dispute &&
                     <>
                         <SubTitle>App Display:</SubTitle>
-                        <div className="w-80">
+                        <div className="w-100">
                             <EvidenceDisplay
                                 uri={`${evidenceDisplayInterfaceURI.replace(
                                     /^\/ipfs\//,
@@ -208,19 +230,12 @@ const DisputePage: React.FC = () => {
                         <TimeDisplay duration={timeUntilNextPeriod}/>
                     </div>
                 </FloatBoxTopRight>
-
-                <FloatBoxBottomRight>
-                    <div className="tr mb2">Check case on:</div>
-                    <div className="tr mb2">
-                        <a className="b" href={`https://court.kleros.io/cases/${disputeID}`} target="blank">Court</a>
-                    </div>
-                    <div className="tr mb2">
-                        <a className="b" href={`http://klerosboard.com/dispute/?id=${disputeID}`} target="blank">KlerosBoard</a>
-                    </div>
-                    <div className="tr mb2">
-                        <a className="b" href={`https://klerosexplorer.com/case/${disputeID}`} target="blank">KlerosExplorer</a>
-                    </div>
-                </FloatBoxBottomRight>
+            </Card>
+            <Card>
+                Rounds (Under construction)
+            </Card>
+            <Card>
+                Evidences (Under construction)
             </Card>
         </Page>
     );
@@ -250,7 +265,7 @@ const DISPUTE_GQL = gql`
 `;
 
 const Card = styled.div.attrs({
-    className: 'db br3 w-100 pa3 bg-white'
+    className: 'db br3 w-100 pa3 bg-white mb3'
 })`
     -webkit-box-shadow: 1px 5px 10px 2px rgba(0,0,0,0.2); 
     box-shadow: 1px 5px 10px 2px rgba(0,0,0,0.15);
@@ -275,8 +290,10 @@ const FloatBoxTopRight = styled.div.attrs({
 })``;
 
 const FloatBoxBottomRight = styled.div.attrs({
-    className: 'absolute bottom-1 right-1'
-})``;
+    className: 'absolute right-1'
+})`
+    bottom: -20px;
+`;
 
 // const Circle = styled.div.attrs({
 //     className: 'flex pointer'
@@ -293,7 +310,7 @@ const FloatBoxBottomRight = styled.div.attrs({
 // `;
 
 const Paragraph = styled.div.attrs({
-    className: "db w-80"
+    className: "db w-100"
 })``
 
 const StyledList = styled.ul.attrs({
@@ -311,6 +328,17 @@ const LoadingScreen = styled.div.attrs({
     className: "w-100 h-100 flex items-center justify-center"
 })`
     height: 70vh;
+`
+
+const DisputeDetailContainer = styled.div.attrs({
+    className: "w-80 relative"
+})``
+
+const GlassLoadingScreen = styled.div.attrs({
+    className: "absolute w-100 h-100 top-0 left-0 br3 flex items-center justify-center"
+})`
+    background-color: rgb(202,150,255,0.15);
+    backdrop-filter: blur(5px);
 `
 
 export default DisputePage;

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Spacer from "../Spacer";
 import NavMenu from "../NavMenu";
 import SearchBar from "../SearchBar";
@@ -12,9 +12,11 @@ const Header: React.FC = () => {
 
     return (
         <HeaderGrid>
-            <HeaderTitle>
-                Kleros Dashboard
-            </HeaderTitle>
+            <StyledLink to="/disputes">
+                <HeaderTitle>
+                    KlerosDB
+                </HeaderTitle>
+            </StyledLink>
             <NavMenu to="/disputes" label="Disputes" active={currentPath === "/disputes"} />
             <NavMenu to="/courts" label="Courts" active={currentPath === "/courts"} />
             <NavMenu to="/apps" label="Apps" active={currentPath === "/apps"} />
@@ -38,6 +40,14 @@ const HeaderGrid = styled.div.attrs({
 
 const HeaderTitle = styled.span.attrs({
     className: 'f4 mr4 b'
-})``;
+})`
+    color: ${props => props.theme.purpleDark}
+`;
+
+const StyledLink = styled(Link).attrs({
+    className: 'no-underline'
+})`
+    color: ${props => props.theme.purpleDarker}
+`;
 
 export default Header;
