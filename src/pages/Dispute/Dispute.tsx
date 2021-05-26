@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Page from "../../components/Page";
 import { useQuery, gql } from '@apollo/client';
-import { Dispute, Period } from "../../types/Dispute";
+import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
-// import { ImFileText2 } from "react-icons/im";
-import { CgNpm, CgSpinner } from "react-icons/cg";
 import { useParams } from "react-router-dom";
 import useCourts from "../../hooks/useCourts";
 import Archon from "@kleros/archon";
-import { MetaEvidence } from "../../types/MetaEvidence";
+import { MetaEvidenceJSON } from "../../types/MetaEvidence";
 import { KLEROS_COURT_ADDRESS, INFURA_ENDPOINT } from "../../utils/constants/address";
 import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
+import EvidenceDisplay from "../../components/EvidenceDisplay";
+import Spinner from "../../components/Spinner";
 
 interface DisputePageParams {
     disputeID: string
@@ -28,13 +28,13 @@ const DisputePage: React.FC = () => {
     const dispute = data?.dispute;
 
     const [ evidenceLoading, setEvidenceLoading ] = useState<boolean>(true);
-    const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidence>({} as MetaEvidence);
+    const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidenceJSON>({} as MetaEvidenceJSON);
     const [ courtName, setCourtName ] = useState<string>("");
     const [ ruling, setRuling ] = useState<string>("");
     const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
     const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
     const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
-    const [ submissionURI, setSubmissionURI ] = useState<string>("");
+    const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
     
     useEffect(() => {
         if (dispute) {
@@ -52,13 +52,22 @@ const DisputePage: React.FC = () => {
                     dispute.arbitrable?.id,
                     disputeLog.metaEvidenceID
                 ).then((metaEvidenceData: any) => {
-                    const result: MetaEvidence = metaEvidenceData.metaEvidenceJSON
+                    const result: MetaEvidenceJSON = metaEvidenceData.metaEvidenceJSON
                     setMetaEvidence(result)
 
                     if (result.fileURI && result.fileURI.length > 0) {
                         setAppPolicyURI("https://ipfs.kleros.io" + result.fileURI) //temp
                     }
-                    // console.log(metaEvidenceData)
+
+                    if (result.evidenceDisplayInterfaceURI && result.evidenceDisplayInterfaceURI.length > 0) {
+                        let interfaceURL = result.evidenceDisplayInterfaceURI
+                        if (!interfaceURL.includes("http")) {
+                            interfaceURL = "https://ipfs.kleros.io" + interfaceURL;
+                        }
+                        setEvidenceDisplayInterfaceURI(interfaceURL) //temp
+                    }
+                    
+                    // console.log(result)
                     setEvidenceLoading(false);
                 })
             })
@@ -81,7 +90,7 @@ const DisputePage: React.FC = () => {
                 setCourtName(name);
             }
         }
-    }, [dispute]);
+    }, [dispute, subcourtToPolicy]);
 
     useEffect(() => {
         if (!dispute || !metaEvidence) {
@@ -90,7 +99,7 @@ const DisputePage: React.FC = () => {
         }
 
         const rulingOptionTitles = metaEvidence.rulingOptions?.titles;
-        if (!rulingOptionTitles || rulingOptionTitles?.length == 0) {
+        if (!rulingOptionTitles || rulingOptionTitles?.length === 0) {
             setRuling("-");
             return;
         };
@@ -132,7 +141,7 @@ const DisputePage: React.FC = () => {
                 <Paragraph>{ metaEvidence?.question ||
                     "Should this request to register be accepted?"}
                 </Paragraph>
-                
+
                 <SubTitle>Choices:</SubTitle>
                 <StyledList>
                     { metaEvidence?.rulingOptions?.titles.map((value, index) => {
@@ -155,9 +164,28 @@ const DisputePage: React.FC = () => {
                     { appPolicyURI.length > 0 && 
                         <li><a href={appPolicyURI} target="blank">App Policy</a></li>}
                     <li><a href={courtMetadataURI} target="blank">Court Metadata</a></li>
-                    { submissionURI.length > 0 &&
-                        <li><a href={submissionURI} target="blank">Submission</a></li>}
                 </StyledList>
+
+                {evidenceDisplayInterfaceURI.length > 0 && dispute &&
+                    <>
+                        <SubTitle>App Display:</SubTitle>
+                        <div className="w-80">
+                            <EvidenceDisplay
+                                uri={`${evidenceDisplayInterfaceURI.replace(
+                                    /^\/ipfs\//,
+                                    'https://ipfs.kleros.io/ipfs/'
+                                )}?${encodeURIComponent(
+                                    JSON.stringify({
+                                    arbitrableContractAddress: dispute?.arbitrable?.id,
+                                    arbitratorContractAddress: KLEROS_COURT_ADDRESS,
+                                    disputeID: dispute?.id
+                                    })
+                                )}`}
+                                height={metaEvidence.evidenceDisplayHeight || '215px'}
+                            />
+                        </div>
+                    </>}
+
                 {/* <div className="flex">
                     <span className="mr2 tc">
                         <Circle>

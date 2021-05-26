@@ -26,7 +26,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
             }
             setCourtName(name);
         }
-    }, [dispute]);
+    }, [dispute, subcourtToPolicy]);
 
     useEffect(() => {
         if (dispute) {
