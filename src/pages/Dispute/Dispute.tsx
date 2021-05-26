@@ -6,7 +6,7 @@ import { Dispute } from "../../types/Dispute";
 import PeriodContainer from "../../components/PeriodContainer";
 import TimeDisplay from "../../components/TimeDisplay";
 import { useParams } from "react-router-dom";
-import useCourts from "../../hooks/useCourts";
+import useCourtPolicy from "../../hooks/useCourtPolicy";
 import Archon from "@kleros/archon";
 import { MetaEvidenceJSON } from "../../types/MetaEvidence";
 import { KLEROS_COURT_ADDRESS, INFURA_ENDPOINT } from "../../utils/constants/address";
@@ -20,7 +20,7 @@ interface DisputePageParams {
 
 const DisputePage: React.FC = () => {
     let { disputeID } = useParams<DisputePageParams>();
-    const { subcourtToPolicy } = useCourts();
+    const { subcourtToPolicy } = useCourtPolicy();
     const { loading, data } = useQuery<DisputeGQLResult>(
         DISPUTE_GQL,
         { variables: { disputeID: disputeID } }

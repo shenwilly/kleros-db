@@ -4,10 +4,10 @@ import { CgSpinner } from "react-icons/cg";
 import SearchResultCard from "../SearchResultCard";
 import useSearch from "../../hooks/useSearch";
 import { useHistory } from "react-router-dom";
-import useCourts from "../../hooks/useCourts";
+import useCourtPolicy from "../../hooks/useCourtPolicy";
 
 const SearchBox: React.FC = () => {
-    const { subcourtToPolicy } = useCourts();
+    const { subcourtToPolicy } = useCourtPolicy();
     const { results, loading, setQuery } = useSearch();
     const history = useHistory();
     const disputes = results;
