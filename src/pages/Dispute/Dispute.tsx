@@ -13,6 +13,7 @@ import { KLEROS_COURT_ADDRESS, INFURA_ENDPOINT } from "../../utils/constants/add
 import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
 import EvidenceDisplay from "../../components/EvidenceDisplay";
 import Spinner from "../../components/Spinner";
+import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI } from "../../utils/kleros-helpers/archon";
 
 interface DisputePageParams {
     disputeID: string
@@ -37,40 +38,28 @@ const DisputePage: React.FC = () => {
     const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
     
     useEffect(() => {
+        const fetchMetaEvidence = async () => {
+            const arbitrable = dispute?.arbitrable?.id;
+            const disputeEventLog = await getDisputeEventLog(dispute?.id!, arbitrable!);
+            const metaEvidenceEventLog = await getMetaEvidenceEventLog(disputeEventLog.metaEvidenceID, arbitrable!);
+
+            const metaEvidenceJSON = metaEvidenceEventLog.metaEvidenceJSON
+            setMetaEvidence(metaEvidenceJSON)
+
+            if (metaEvidenceJSON.fileURI && metaEvidenceJSON.fileURI.length > 0) {
+                setAppPolicyURI(getIpfsFullURI(metaEvidenceJSON.fileURI))
+            }
+
+            if (metaEvidenceJSON.evidenceDisplayInterfaceURI && metaEvidenceJSON.evidenceDisplayInterfaceURI.length > 0) {
+                setEvidenceDisplayInterfaceURI(getIpfsFullURI(metaEvidenceJSON.evidenceDisplayInterfaceURI))
+            }
+            
+            setEvidenceLoading(false);
+        };
+
         if (dispute) {
             setEvidenceLoading(true);
-            var archon = new Archon(INFURA_ENDPOINT);
-
-            // fetch metaevidence
-            archon.arbitrable.getDispute(
-                dispute.arbitrable?.id,
-                KLEROS_COURT_ADDRESS,
-                dispute.id,
-            ).then((disputeLog: any) => {
-                // console.table(disputeLog)
-                archon.arbitrable.getMetaEvidence(
-                    dispute.arbitrable?.id,
-                    disputeLog.metaEvidenceID
-                ).then((metaEvidenceData: any) => {
-                    const result: MetaEvidenceJSON = metaEvidenceData.metaEvidenceJSON
-                    setMetaEvidence(result)
-
-                    if (result.fileURI && result.fileURI.length > 0) {
-                        setAppPolicyURI("https://ipfs.kleros.io" + result.fileURI) //temp
-                    }
-
-                    if (result.evidenceDisplayInterfaceURI && result.evidenceDisplayInterfaceURI.length > 0) {
-                        let interfaceURL = result.evidenceDisplayInterfaceURI
-                        if (!interfaceURL.includes("http")) {
-                            interfaceURL = "https://ipfs.kleros.io" + interfaceURL;
-                        }
-                        setEvidenceDisplayInterfaceURI(interfaceURL) //temp
-                    }
-                    
-                    // console.log(result)
-                    setEvidenceLoading(false);
-                })
-            })
+            fetchMetaEvidence();
         };
     }, [dispute]);
 
