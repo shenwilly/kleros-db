@@ -18,7 +18,6 @@ const SearchBar: React.FC = () => {
     }, [query]);
 
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        console.log(e.key);
         if (e.key === 'Enter') {
             if (results.length > 0) {
                 const dispute = results[0];

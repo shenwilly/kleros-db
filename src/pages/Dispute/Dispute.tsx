@@ -111,7 +111,7 @@ const DisputePage: React.FC = () => {
     if (loading || evidenceLoading)
         return (
             <LoadingScreen>
-                <CgSpinner className="f1 rotate-center"/>
+                <Spinner/>
             </LoadingScreen>
         )
 

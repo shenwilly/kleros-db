@@ -7,11 +7,11 @@ import CourtsPage from "./pages/Courts";
 import AppsPage from "./pages/Apps";
 import AboutPage from "./pages/About";
 import DisputePage from "./pages/Dispute";
-import { CgSpinner } from "react-icons/cg";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { CourtsProvider } from './contexts/Courts';
 import useCourts from "./hooks/useCourts";
+import Spinner from "./components/Spinner";
 
 const client = new ApolloClient({
   uri: 'https://api.thegraph.com/subgraphs/name/shenwilly/kleros-liquid',
@@ -55,7 +55,7 @@ const App: React.FC = () => {
       </SiteWrapper>
       <div className={loadingClassName}>
         <LoadingScreen>
-          <CgSpinner className="f1 rotate-center"/>
+          <Spinner/>
         </LoadingScreen>
       </div>
     </>
