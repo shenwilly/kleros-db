@@ -1,5 +1,6 @@
 import { Arbitrable } from "./Arbitrable";
 import { Court } from "./Court";
+import { DisputeRound } from "./DisputeRound";
 
 export type Dispute = {
     id: string,
@@ -14,6 +15,8 @@ export type Dispute = {
     drawsInRound?: string,
     commitsInRound?: string,
     ruled?: boolean,
+
+    rounds?: DisputeRound[],
 
     // latestRound: BigInt!
     // rounds: [DisputeRound!] ! @derivedFrom(field: "dispute")
