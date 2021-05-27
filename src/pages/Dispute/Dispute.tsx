@@ -240,6 +240,7 @@ const DISPUTE_GQL = gql`
             subcourt {
                 id
                 timesPerPeriod
+                hiddenVotes
             }
             arbitrable {
                 id
@@ -247,6 +248,20 @@ const DISPUTE_GQL = gql`
             lastPeriodChange
             period
             ruled
+            rounds {
+                id
+                round
+                voteCount
+                votes {
+                    id
+                    juror {
+                        id
+                    }
+                    voted
+                    commit
+                    choice
+                }
+            }
         }
     }
 `;
