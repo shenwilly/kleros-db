@@ -30,6 +30,7 @@ const Header: React.FC = () => {
                 <div className="dn db-gt-xs">
                     {paths.map((path) => (
                         <NavMenu 
+                            key={path.to}
                             to={path.to}
                             label={path.label} 
                             active={currentPath === path.to || (path.to === "/disputes" && currentPath === "/")} />
@@ -45,6 +46,7 @@ const Header: React.FC = () => {
                             </div>
                             {paths.map((path) => (
                                 <MobileNavMenu 
+                                    key={path.to}
                                     to={path.to} 
                                     onClick={() => setShowMobileMenu(false)}>
                                     {path.label}
