@@ -13,6 +13,8 @@ import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
 import EvidenceDisplay from "../../components/EvidenceDisplay";
 import Spinner from "../../components/Spinner";
 import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI, getRulingEventLog } from "../../utils/kleros-helpers/archon";
+import { DisputeRound } from "../../types/DisputeRound";
+import RoundCard from "../../components/RoundCard";
 
 interface DisputePageParams {
     disputeID: string
@@ -35,6 +37,7 @@ const DisputePage: React.FC = () => {
     const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
     const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
     const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
+    const [ rounds, setRounds ] = useState<DisputeRound[]>([]);
     
     useEffect(() => {
         const fetchMetaEvidence = async () => {
@@ -43,6 +46,7 @@ const DisputePage: React.FC = () => {
             const metaEvidenceEventLog = await getMetaEvidenceEventLog(disputeEventLog.metaEvidenceID, arbitrable!);
 
             const metaEvidenceJSON = metaEvidenceEventLog.metaEvidenceJSON
+
             setMetaEvidence(metaEvidenceJSON)
 
             if (metaEvidenceJSON.fileURI && metaEvidenceJSON.fileURI.length > 0) {
@@ -81,9 +85,14 @@ const DisputePage: React.FC = () => {
     }, [dispute, subcourtToPolicy]);
 
     useEffect(() => {
-        const fetchRuling = async (dispute: Dispute, options: string[]) => {
+        const fetchRuling = async (dispute: Dispute, optionTitles: string[]) => {
             const rulingEventLog = await getRulingEventLog(dispute.id, dispute.arbitrable?.id!)
-            const ruling = Number(rulingEventLog.ruling) - 1;
+            const ruling = Number(rulingEventLog.ruling);
+
+            // temp: add option 0 refuse to
+            let options = [...optionTitles]
+            options.unshift("Refuse to Arbitrate");
+
             setRuling(options[ruling]);
         }
 
@@ -102,6 +111,16 @@ const DisputePage: React.FC = () => {
             fetchRuling(dispute, rulingOptionTitles);
         }
     }, [dispute, metaEvidence]);
+
+    useEffect(() => {
+        if (dispute) {
+            let disputeRounds = dispute.rounds ?? [];
+            disputeRounds?.slice().sort((a, b) => Number(a.round) - Number(b.round));
+            console.log(disputeRounds);
+
+            setRounds(disputeRounds)
+        }
+    }, [dispute]);
 
     // if (loading || evidenceLoading)
     if (loading)
@@ -219,7 +238,12 @@ const DisputePage: React.FC = () => {
                 </FloatBoxTopRight>
             </Card>
             <Card>
-                Rounds (Under construction)
+                <div className="f4 mb3">
+                    Dispute Rounds
+                </div>
+                    { metaEvidence && rounds.map((round) => {
+                        return <RoundCard key={round.id} round={round} optionTitles={metaEvidence.rulingOptions?.titles}/>
+                    })}
             </Card>
             <Card>
                 Evidences (Under construction)
