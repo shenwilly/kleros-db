@@ -6,6 +6,7 @@ import useCourtPolicy from "../../hooks/useCourtPolicy";
 import PeriodContainer from "../PeriodContainer";
 import TimeDisplay from "../TimeDisplay";
 import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
+import { getCourtFullName } from "../../utils/kleros-helpers/court";
 
 interface DisputeCardProp {
     dispute?: Dispute,
@@ -20,10 +21,7 @@ const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
         if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
             const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
 
-            let name = subcourtPolicy?.name ?? "";
-            if (name.length > 0 && !name.toLowerCase().includes("court")) {
-                name = name + " Court";
-            }
+            let name = getCourtFullName(subcourtPolicy?.name ?? "");
             setCourtName(name);
         }
     }, [dispute, subcourtToPolicy]);
