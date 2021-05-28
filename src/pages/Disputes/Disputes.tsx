@@ -19,6 +19,8 @@ const DisputesPage: React.FC = () => {
                 Latest Disputes
             </SubTitle>
 
+            {/* filter & sort */}
+
             {loading && 
                 <LoadingScreen> 
                     <Spinner/>
