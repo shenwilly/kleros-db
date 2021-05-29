@@ -36,7 +36,6 @@ const DisputePage: React.FC = () => {
     const [ courtName, setCourtName ] = useState<string>("");
     const [ ruling, setRuling ] = useState<string>("");
     const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
-    // const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
     const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
     const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
     const [ rounds, setRounds ] = useState<DisputeRound[]>([]);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Context from "./Context";
 import { useQuery, gql } from '@apollo/client';
 import { http } from "../../utils/http/http";
@@ -54,15 +54,15 @@ const Provider: React.FC = ({ children }) => {
         fetchPolicies()
       }
     }, [policyQueryData]);
-
-    const getCourtPolicy = (subcourtID: string): PolicyData | null => {
+    
+    const getCourtPolicy = useCallback((subcourtID: string): PolicyData | null => {
       if (!subcourtToPolicy.has(subcourtID)) {
         return null;
       }
       return subcourtToPolicy.get(subcourtID);
-    }
+    }, [subcourtToPolicy]);
 
-    const getCourtName = (subcourtID: string): string => {
+    const getCourtName = useCallback((subcourtID: string): string => {
       let name: string;
       let policy = getCourtPolicy(subcourtID);
       if (policy) {
@@ -71,7 +71,7 @@ const Provider: React.FC = ({ children }) => {
         name = "-"
       }
       return name;
-    }
+    }, [getCourtPolicy]);
 
     return (
         <Context.Provider
