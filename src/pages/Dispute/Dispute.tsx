@@ -16,6 +16,7 @@ import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI, getRulingE
 import { DisputeRound } from "../../types/DisputeRound";
 import RoundCard from "../../components/RoundCard";
 import { getCourtFullName } from "../../utils/kleros-helpers/court";
+import { PolicyData } from "../../types/Policy";
 
 interface DisputePageParams {
     disputeID: string
@@ -23,7 +24,7 @@ interface DisputePageParams {
 
 const DisputePage: React.FC = () => {
     let { disputeID } = useParams<DisputePageParams>();
-    const { subcourtToPolicy } = useCourtPolicy();
+    const { getCourtPolicy, getCourtName } = useCourtPolicy();
     const { loading, data } = useQuery<DisputeGQLResult>(
         DISPUTE_GQL,
         { variables: { disputeID: disputeID } }
@@ -32,10 +33,11 @@ const DisputePage: React.FC = () => {
 
     const [ evidenceLoading, setEvidenceLoading ] = useState<boolean>(true);
     const [ metaEvidence, setMetaEvidence ] = useState<MetaEvidenceJSON>({} as MetaEvidenceJSON);
+    const [ courtPolicy, setCourtPolicy ] = useState<PolicyData>();
     const [ courtName, setCourtName ] = useState<string>("");
     const [ ruling, setRuling ] = useState<string>("");
     const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
-    const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
+    // const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
     const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
     const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
     const [ rounds, setRounds ] = useState<DisputeRound[]>([]);
@@ -67,20 +69,30 @@ const DisputePage: React.FC = () => {
         };
     }, [dispute]);
 
+    // useEffect(() => {
+    //     if (dispute) {
+    //         if (dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
+    //             const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
+    //             setCourtMetadataURI(subcourtPolicy?.uri ?? "");
+
+    //             let name = getCourtFullName(subcourtPolicy?.name ?? "");
+    //             setCourtName(name);
+    //         }
+    //     }
+    // }, [dispute, subcourtToPolicy]);
+
     useEffect(() => {
-        if (dispute) {
-            const duration = getTimeUntilNextPeriod(dispute);
-            setTimeUntilNextPeriod(duration);
+        if (dispute && dispute.subcourt) {
+            let policy = getCourtPolicy(dispute.subcourt.id);
+            if (policy) {
+                setCourtPolicy(policy);
 
-            if (dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-                const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
-                setCourtMetadataURI(subcourtPolicy?.uri ?? "");
-
-                let name = getCourtFullName(subcourtPolicy?.name ?? "");
-                setCourtName(name);
+                let name = getCourtName(dispute.subcourt.id);
+                setCourtName(name)
             }
         }
-    }, [dispute, subcourtToPolicy]);
+    }, [dispute, getCourtPolicy]);
+    
 
     useEffect(() => {
         const fetchRuling = async (dispute: Dispute, optionTitles: string[]) => {
@@ -114,9 +126,10 @@ const DisputePage: React.FC = () => {
         if (dispute) {
             let disputeRounds = dispute.rounds ?? [];
             disputeRounds?.slice().sort((a, b) => Number(a.round) - Number(b.round));
-            console.log(disputeRounds);
-
             setRounds(disputeRounds)
+
+            const duration = getTimeUntilNextPeriod(dispute);
+            setTimeUntilNextPeriod(duration);
         }
     }, [dispute]);
 
@@ -175,7 +188,8 @@ const DisputePage: React.FC = () => {
                     <StyledList>
                         { appPolicyURI.length > 0 && 
                             <li><a href={appPolicyURI} target="blank">App Policy</a></li>}
-                        <li><a href={courtMetadataURI} target="blank">Court Metadata</a></li>
+                        { courtPolicy && courtPolicy?.uri?.length > 0 && 
+                            <li><a href={courtPolicy?.uri} target="blank">Court Metadata</a></li>}
                     </StyledList>
 
                     <FloatBoxBottomRight>
