@@ -3,6 +3,7 @@ import Context from "./Context";
 import { useQuery, gql } from '@apollo/client';
 import { http } from "../../utils/http/http";
 import { Policy, PolicyData } from "../../types/Policy";
+import { getCourtFullName } from "../../utils/kleros-helpers/court";
 
 const Provider: React.FC = ({ children }) => {
     const [ loaded, setLoaded ] = useState(false);
@@ -54,11 +55,31 @@ const Provider: React.FC = ({ children }) => {
       }
     }, [policyQueryData]);
 
+    const getCourtPolicy = (subcourtID: string): PolicyData | null => {
+      if (!subcourtToPolicy.has(subcourtID)) {
+        return null;
+      }
+      return subcourtToPolicy.get(subcourtID);
+    }
+
+    const getCourtName = (subcourtID: string): string => {
+      let name: string;
+      let policy = getCourtPolicy(subcourtID);
+      if (policy) {
+        name = getCourtFullName(policy.name);
+      } else {
+        name = "-"
+      }
+      return name;
+    }
+
     return (
         <Context.Provider
             value={{
               loaded,
-              subcourtToPolicy
+              subcourtToPolicy,
+              getCourtPolicy,
+              getCourtName,
             }}>
             {children}
         </Context.Provider>
