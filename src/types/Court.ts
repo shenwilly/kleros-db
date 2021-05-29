@@ -5,7 +5,7 @@ export type Court = {
     minStake: string,
     alpha: string,
     feeForJuror: string,
-    jurorsForCourtJump: string,
+    jurorsForCourtJump: string, // After a round has this number of jurors, the next appeal will be handled by parent court. If no parent court, no appeal is possible
     timesPerPeriod: string[],
     
     disputeCount: string,

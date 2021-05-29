@@ -7,41 +7,30 @@ interface RoundCardProps {
     optionTitles?: string[]
 }
 
-const RoundCard: React.FC<RoundCardProps> = ({ round, optionTitles = [] }) => {
+const RoundCard: React.FC<RoundCardProps> = ({ round, optionTitles = ['Yes', 'No'] }) => {
     const roundNumber = Number(round.round) + 1;
-    const votes = round.votes ?? [];
-    const voteCount: Map<number, number> = new Map();
-    let abstainVoteCount: number = 0;
-    let refuseToVoteCount: number;
+    const winningChoice = Number(round.winningChoice!);
+
+    const voteCount = Number(round.voteCount!);
+    const castedVoteCounts = round.castedVoteCounts!;
+
+    let votedCount = 0;
+    castedVoteCounts.forEach((castedVoteCount) => {
+        let count = Number(castedVoteCount);
+        votedCount += count
+    })
+    let pendingVoteCount = voteCount - votedCount;
+    let refuseToVoteCount = Number(castedVoteCounts[0]);
+    
 
     let allOptionTitles = [...optionTitles]
-    allOptionTitles.unshift("Refuse to Arbitrate"); //temp
-
-    // TODO: handle first to tied win
-    votes.forEach((vote) => {
-        if (vote.voted) {
-            const choice = Number(vote.choice);
-            const count = (voteCount.get(choice) ?? 0) + 1
-            voteCount.set(choice, count);
-        } else {
-            abstainVoteCount++;
-        }
-    })
-
-    refuseToVoteCount = voteCount.get(0) ?? 0;
+    allOptionTitles.unshift("Refuse to Arbitrate"); 
     
-    let winningOption = 0;
-    voteCount.forEach((count, index) => {
-        if (count > (voteCount.get(winningOption) ?? 0)) {
-            winningOption = index;
-        }
-    })
-
     let winningOptionTitle: string = "";
-    if (winningOption === 0 && refuseToVoteCount === 0) {
+    if (winningChoice === 0 && refuseToVoteCount === 0) {
         winningOptionTitle = "Pending"
     } else {
-        winningOptionTitle = allOptionTitles[winningOption];
+        winningOptionTitle = allOptionTitles[winningChoice];
     }
     
     return (
@@ -62,7 +51,7 @@ const RoundCard: React.FC<RoundCardProps> = ({ round, optionTitles = [] }) => {
                             <span>{option}</span>
                         </td>
                         <td className="tc b bb">
-                            { voteCount.get(index) ?? "0" }
+                            { castedVoteCounts[index] ?? "0" }
                         </td>
                     </tr>
                 })}
@@ -77,10 +66,10 @@ const RoundCard: React.FC<RoundCardProps> = ({ round, optionTitles = [] }) => {
                     </tr>}
                 <tr>
                     <td>
-                        <span>Abstain</span>
+                        <span>Pending</span>
                     </td>
                     <td className="tc b">
-                        {abstainVoteCount}
+                        {pendingVoteCount}
                     </td>
                 </tr>
             </tbody>
