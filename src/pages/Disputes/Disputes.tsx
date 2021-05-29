@@ -10,7 +10,8 @@ import { PageTitle, PageSubTitle, StyledLink } from "../../components/StyledComp
 const DisputesPage: React.FC = () => {
     const { loading, error, data } = useQuery<DisputesGQLResult>(LATEST_DISPUTES_GQL);
     
-    const disputes = data?.disputes ?? [];
+    const latestDisputes = data?.latest ?? [];
+    const appealDisputes = data?.appeal ?? [];
     
     return (
         <Page>
@@ -29,7 +30,19 @@ const DisputesPage: React.FC = () => {
                     </PageSubTitle>
                     <StyledGrid>
                         {  
-                            disputes.map((dispute) => (
+                            latestDisputes.map((dispute) => (
+                                <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
+                                    <DisputeCard key={dispute.id} dispute={dispute}/>
+                                </StyledLink>
+                            ))
+                        }
+                    </StyledGrid>
+                    <PageSubTitle>
+                        Disputes in Appeal Period
+                    </PageSubTitle>
+                    <StyledGrid>
+                        {  
+                            appealDisputes.map((dispute) => (
                                 <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
                                     <DisputeCard key={dispute.id} dispute={dispute}/>
                                 </StyledLink>
@@ -42,12 +55,24 @@ const DisputesPage: React.FC = () => {
 };
 
 interface DisputesGQLResult {
-    disputes: Dispute[]
+    latest: Dispute[],
+    appeal: Dispute[]
 }
 
 const LATEST_DISPUTES_GQL = gql`
     query latestDisputes {
-        disputes(first: 9, orderBy: disputeID, orderDirection: desc) {
+        latest:disputes(first: 6, orderBy: disputeID, orderDirection: desc) {
+            id
+            disputeID
+            subcourt {
+                id
+                timesPerPeriod
+            }
+            lastPeriodChange
+            period
+            ruled
+        }
+        appeal:disputes(where: { period: "Appeal" }, orderBy: lastPeriodChange, orderDirection: asc) {
             id
             disputeID
             subcourt {
