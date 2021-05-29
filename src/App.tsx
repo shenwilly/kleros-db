@@ -7,6 +7,7 @@ import CourtsPage from "./pages/Courts";
 import AppsPage from "./pages/Apps";
 import AboutPage from "./pages/About";
 import DisputePage from "./pages/Dispute";
+import CourtPage from "./pages/Court";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { CourtPolicyProvider } from './contexts/CourtPolicy';
@@ -49,6 +50,9 @@ const App: React.FC = () => {
               </Route>
               <Route exact path="/disputes/:disputeID">
                 <DisputePage />
+              </Route>
+              <Route exact path="/courts/:subcourtID">
+                <CourtPage />
               </Route>
             </Switch>
           </PageWrapper>
