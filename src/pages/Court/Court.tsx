@@ -81,18 +81,6 @@ const CourtPage: React.FC = () => {
                         </Paragraph>
                     </GridElement>
                     <GridElement>
-                        <SubTitle>Private Votes:</SubTitle>
-                        <Paragraph>
-                            {court.hiddenVotes === true ? 'Yes' : 'No'}
-                        </Paragraph>
-                    </GridElement>
-                    <GridElement>
-                        <SubTitle>Alpha:</SubTitle>
-                        <Paragraph>
-                            {court.alpha}
-                        </Paragraph>
-                    </GridElement>
-                    <GridElement>
                         <SubTitle>Minimal PNK Stake:</SubTitle>
                         <Paragraph>
                             {ethers.utils.formatUnits(court.minStake, 18)} PNK
@@ -105,6 +93,18 @@ const CourtPage: React.FC = () => {
                         </Paragraph>
                     </GridElement>
                     <GridElement>
+                        <SubTitle>Private Votes:</SubTitle>
+                        <Paragraph>
+                            {court.hiddenVotes === true ? 'Yes' : 'No'}
+                        </Paragraph>
+                    </GridElement>
+                    <GridElement>
+                        <SubTitle>Alpha:</SubTitle>
+                        <Paragraph>
+                            {court.alpha}
+                        </Paragraph>
+                    </GridElement>
+                    <GridElement>
                         <SubTitle>Jurors for Court Jump:</SubTitle>
                         <Paragraph>
                             {court.jurorsForCourtJump}
@@ -112,7 +112,7 @@ const CourtPage: React.FC = () => {
                     </GridElement>
                 </Grid>
 
-                <SubTitle>Description:</SubTitle>
+                {/* <SubTitle>Description:</SubTitle> */}
                 <Paragraph>
                     <ReactMarkdown>
                         {courtPolicy?.description ?? "-"}
@@ -205,8 +205,10 @@ const FloatBoxBottomRight = styled.div.attrs({
 })``;
 
 const Grid = styled.div.attrs({
-    className: 'db w-100'
-})``
+    className: 'db w-100 bt bb pb3 mt3'
+})`
+    border-color: ${props => props.theme.purpleDark};
+`
 
 const GridElement = styled.div.attrs({
     className: 'dib w-100 w-50-sm w-third-gt-sm'
