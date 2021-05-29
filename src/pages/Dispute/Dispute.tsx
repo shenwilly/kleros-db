@@ -15,7 +15,6 @@ import Spinner from "../../components/Spinner";
 import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI, getRulingEventLog } from "../../utils/kleros-helpers/archon";
 import { DisputeRound } from "../../types/DisputeRound";
 import RoundCard from "../../components/RoundCard";
-import { getCourtFullName } from "../../utils/kleros-helpers/court";
 import { PolicyData } from "../../types/Policy";
 
 interface DisputePageParams {
@@ -91,7 +90,7 @@ const DisputePage: React.FC = () => {
                 setCourtName(name)
             }
         }
-    }, [dispute, getCourtPolicy]);
+    }, [dispute, getCourtPolicy, getCourtName]);
     
 
     useEffect(() => {
