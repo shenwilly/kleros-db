@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import ReactMarkdown from 'react-markdown'
 import Page from "../../components/Page";
 import { useQuery, gql } from '@apollo/client';
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import useCourtPolicy from "../../hooks/useCourtPolicy";
 import Spinner from "../../components/Spinner";
-import { getCourtFullName } from "../../utils/kleros-helpers/court";
 import { Court } from "../../types/Court";
 import { StyledButton } from "../../components/StyledComponents/StyledComponents";
 import { ethers } from "ethers";
+import { PolicyData } from "../../types/Policy";
 
 interface CourtPageParams {
     subcourtID: string
@@ -16,27 +17,25 @@ interface CourtPageParams {
 
 const CourtPage: React.FC = () => {
     let { subcourtID } = useParams<CourtPageParams>();
-    const { subcourtToPolicy } = useCourtPolicy();
+    const { getCourtPolicy, getCourtName } = useCourtPolicy();
     const { loading, data } = useQuery<CourtGQLResult>(
         COURT_GQL,
         { variables: { subcourtID: subcourtID } }
     );
-    const [ courtName, setCourtName ] = useState<string>("");
-    const [ courtMetadataURI, setCourtMetadataURI ] = useState<string>("");
+    const [ courtPolicy, setCourtPolicy ] = useState<PolicyData>();
 
     const court = data?.court!;
-    console.log(court);
+    const subcourts = court?.children ?? [];
 
     useEffect(() => {
-        if (court && subcourtToPolicy.has(court.id)) {
-            const subcourtPolicy = subcourtToPolicy.get(court.id);
-            setCourtMetadataURI(subcourtPolicy?.uri ?? "");
-
-            let name = getCourtFullName(subcourtPolicy?.name ?? "");
-            setCourtName(name);
+        if (court) {
+            let policy = getCourtPolicy(court.id);
+            if (policy) {
+                setCourtPolicy(policy);
+            }
         }
-    }, [court, subcourtToPolicy]);
-
+    }, [court, getCourtPolicy]);
+    
     if (loading)
         return (
             <LoadingScreen>
@@ -47,16 +46,31 @@ const CourtPage: React.FC = () => {
     return (
         <Page>
             <Card>
-                <Title>#{subcourtID} - {courtName}</Title>
+                <Title>#{subcourtID} - {getCourtName(subcourtID)}</Title>
 
                 <SubTitle>Parent Court:</SubTitle>
                 <Paragraph>
-                    -
+                    {court.parent 
+                        ? <Link to={`${court.parent.id}`}>
+                            {getCourtName(court.parent.id)}
+                        </Link>
+                        : '-'}
                 </Paragraph>
 
                 <SubTitle>Subcourts:</SubTitle>
                 <Paragraph>
-                    -
+                    {subcourts.length > 0
+                        ? subcourts.map((subcourt, index) => (
+                            <span>
+                                <Link to={`${subcourt.id}`}>
+                                    {getCourtName(subcourt.id)}
+                                </Link>
+
+                                {index < subcourts.length - 1 ? ', ' : ''}
+                            </span>
+                        ))
+                        : "-"
+                    }
                 </Paragraph>
 
                 <Grid>
@@ -69,7 +83,7 @@ const CourtPage: React.FC = () => {
                     <GridElement>
                         <SubTitle>Private Votes:</SubTitle>
                         <Paragraph>
-                            {court.hiddenVotes == true ? 'Yes' : 'No'}
+                            {court.hiddenVotes === true ? 'Yes' : 'No'}
                         </Paragraph>
                     </GridElement>
                     <GridElement>
@@ -98,9 +112,16 @@ const CourtPage: React.FC = () => {
                     </GridElement>
                 </Grid>
 
+                <SubTitle>Description:</SubTitle>
+                <Paragraph>
+                    <ReactMarkdown>
+                        {courtPolicy?.description ?? "-"}
+                    </ReactMarkdown>
+                </Paragraph>
+
                 <SubTitle>Documents:</SubTitle>
                 <Paragraph>
-                    <a href={courtMetadataURI} target="blank">Court Metadata</a>
+                    <a href={courtPolicy?.uri} target="blank">Court Metadata</a>
                 </Paragraph>
 
                 <FloatBoxTopRight>
@@ -176,7 +197,7 @@ const LoadingScreen = styled.div.attrs({
 `
 
 const FloatBoxTopRight = styled.div.attrs({
-    className: 'absolute top-1 right-1 mt2 tr'
+    className: 'absolute top-1 right-1 tr'
 })``;
 
 const FloatBoxBottomRight = styled.div.attrs({
