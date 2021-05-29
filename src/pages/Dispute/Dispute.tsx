@@ -283,6 +283,9 @@ const DISPUTE_GQL = gql`
                     commit
                     choice
                 }
+                winningChoice
+                tied
+                castedVoteCounts
             }
         }
     }
