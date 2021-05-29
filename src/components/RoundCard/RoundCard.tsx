@@ -17,6 +17,7 @@ const RoundCard: React.FC<RoundCardProps> = ({ round, optionTitles = [] }) => {
     let allOptionTitles = [...optionTitles]
     allOptionTitles.unshift("Refuse to Arbitrate"); //temp
 
+    // TODO: handle first to tied win
     votes.forEach((vote) => {
         if (vote.voted) {
             const choice = Number(vote.choice);

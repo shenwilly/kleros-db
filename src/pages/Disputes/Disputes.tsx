@@ -4,8 +4,8 @@ import Page from "../../components/Page";
 import DisputeCard from "../../components/DisputeCard";
 import { useQuery, gql } from '@apollo/client';
 import { Dispute } from "../../types/Dispute";
-import { Link } from "react-router-dom";
 import Spinner from "../../components/Spinner";
+import { PageTitle, PageSubTitle, StyledLink } from "../../components/StyledComponents/StyledComponents";
 
 const DisputesPage: React.FC = () => {
     const { loading, error, data } = useQuery<DisputesGQLResult>(LATEST_DISPUTES_GQL);
@@ -14,25 +14,29 @@ const DisputesPage: React.FC = () => {
     
     return (
         <Page>
-            <Title>Disputes</Title>
-            <SubTitle>
-                Latest Disputes
-            </SubTitle>
+            <PageTitle>Disputes</PageTitle>
+
+            {/* filter & sort */}
 
             {loading && 
                 <LoadingScreen> 
                     <Spinner/>
                 </LoadingScreen>}
             {!loading && 
-                <DisputeGrid>
-                    {  
-                        disputes.map((dispute) => (
-                            <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
-                                <DisputeCard key={dispute.id} dispute={dispute}/>
-                            </StyledLink>
-                        ))
-                    }
-                </DisputeGrid>}
+                <>
+                    <PageSubTitle>
+                        Latest Disputes
+                    </PageSubTitle>
+                    <StyledGrid>
+                        {  
+                            disputes.map((dispute) => (
+                                <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
+                                    <DisputeCard key={dispute.id} dispute={dispute}/>
+                                </StyledLink>
+                            ))
+                        }
+                    </StyledGrid>
+                </>}
         </Page>
     );
 };
@@ -57,14 +61,6 @@ const LATEST_DISPUTES_GQL = gql`
     }
 `;
 
-const Title = styled.div.attrs({
-    className: 'f4'
-})``;
-
-const SubTitle = styled.div.attrs({
-    className: 'mv3'
-})``;
-
 // interface ClassNameProps {
 //     className?: string;
 // }
@@ -76,15 +72,9 @@ const SubTitle = styled.div.attrs({
 //     border-radius: 8px;
 // `;
 
-const DisputeGrid = styled.div.attrs({
+const StyledGrid = styled.div.attrs({
     className: 'db w-100'
 })``;
-
-const StyledLink = styled(Link).attrs({
-    className: 'no-underline'
-})`
-    color: ${props => props.theme.textColor}
-`;
 
 const LoadingScreen = styled.div.attrs({
     className: "w-100 h-100 flex items-center justify-center"

@@ -1,67 +1,64 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Spacer from "../Spacer";
-import { Dispute } from "../../types/Dispute";
 import useCourtPolicy from "../../hooks/useCourtPolicy";
-import PeriodContainer from "../PeriodContainer";
-import TimeDisplay from "../TimeDisplay";
-import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
+import { Court } from "../../types/Court";
 import { getCourtFullName } from "../../utils/kleros-helpers/court";
 
-interface DisputeCardProp {
-    dispute?: Dispute,
+interface CourtCardProp {
+    court?: Court,
 }
 
-const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
+const CourtCard: React.FC<CourtCardProp> = ({ court }) => {
     const { subcourtToPolicy } = useCourtPolicy();
     const [ courtName, setCourtName ] = useState<string>("");
-    const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
 
     useEffect(() => {
-        if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-            const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
+        if (court && subcourtToPolicy.has(court.id)) {
+            const subcourtPolicy = subcourtToPolicy.get(court.id);
 
             let name = getCourtFullName(subcourtPolicy?.name ?? "");
             setCourtName(name);
         }
-    }, [dispute, subcourtToPolicy]);
+    }, [court, subcourtToPolicy]);
 
-    useEffect(() => {
-        if (dispute) {
-            const duration = getTimeUntilNextPeriod(dispute);
-            setTimeUntilNextPeriod(duration);
-        }
-    }, [dispute]);
+    // useEffect(() => {
+    //     if (dispute) {
+    //         const duration = getTimeUntilNextPeriod(dispute);
+    //         setTimeUntilNextPeriod(duration);
+    //     }
+    // }, [dispute]);
     
     return (
         <>
             <Padding>
                 <Card>
                     <CardTopRow>
-                        <span className="f4 b">#{dispute?.id}</span>
-                        <Spacer/>
-                        <span>{courtName}</span>
+                        <span className="f4 b">{courtName}</span>
+                        {/* <Spacer/> */}
+                        {/* <span>{courtName}</span> */}
                     </CardTopRow>
                     <CardBottomRow>
-                        <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
+                        {/* <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/> */}
                         <Spacer/>
-                        <div className="tr">
+                        <span>Disputes: {court?.disputeCount}</span>
+                        {/* <div className="tr">
                             <div>
                                 Next period in:
                             </div>
                             <TimeDisplay duration={timeUntilNextPeriod}/>
-                        </div>
+                        </div> */}
                     </CardBottomRow>
                     <CardBottomRowMobile>
-                        <div className="tc mt4">
+                        {/* <div className="tc mt4">
                             <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
-                        </div>
-                        <div className="tc pt4">
+                        </div> */}
+                        {/* <div className="tc pt4">
                             <div>
                                 Next period in:
                             </div>
                             <TimeDisplay duration={timeUntilNextPeriod}/>
-                        </div>
+                        </div> */}
                     </CardBottomRowMobile>
                 </Card>
             </Padding>   
@@ -85,15 +82,17 @@ const Card = styled.div.attrs({
 `;
 
 const CardTopRow = styled.div.attrs({
-    className: 'db w-100 flex nowrap'
-})``;
+    className: 'db w-100 flex wrap'
+})`
+    height: 2rem;
+`;
 
 const CardBottomRow = styled.div.attrs({
-    className: 'dn flex-gt-xs w-100 nowrap items-end mt4'
+    className: 'dn flex-gt-xs w-100 nowrap items-end mt3'
 })``;
 
 const CardBottomRowMobile = styled.div.attrs({
     className: 'flex-column dn-gt-xs mt3 items-center'
 })``;
 
-export default DisputeCard;
+export default CourtCard;

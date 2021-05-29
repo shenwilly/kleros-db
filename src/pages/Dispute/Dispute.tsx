@@ -15,6 +15,7 @@ import Spinner from "../../components/Spinner";
 import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI, getRulingEventLog } from "../../utils/kleros-helpers/archon";
 import { DisputeRound } from "../../types/DisputeRound";
 import RoundCard from "../../components/RoundCard";
+import { getCourtFullName } from "../../utils/kleros-helpers/court";
 
 interface DisputePageParams {
     disputeID: string
@@ -75,10 +76,7 @@ const DisputePage: React.FC = () => {
                 const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
                 setCourtMetadataURI(subcourtPolicy?.uri ?? "");
 
-                let name = subcourtPolicy?.name ?? "";
-                if (name.length > 0 && !name.toLowerCase().includes("court")) {
-                    name = name + " Court";
-                }
+                let name = getCourtFullName(subcourtPolicy?.name ?? "");
                 setCourtName(name);
             }
         }
