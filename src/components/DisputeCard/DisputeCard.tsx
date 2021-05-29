@@ -6,25 +6,22 @@ import useCourtPolicy from "../../hooks/useCourtPolicy";
 import PeriodContainer from "../PeriodContainer";
 import TimeDisplay from "../TimeDisplay";
 import { getTimeUntilNextPeriod } from "../../utils/kleros-helpers/period";
-import { getCourtFullName } from "../../utils/kleros-helpers/court";
 
 interface DisputeCardProp {
     dispute?: Dispute,
 }
 
 const DisputeCard: React.FC<DisputeCardProp> = ({ dispute }) => {
-    const { subcourtToPolicy } = useCourtPolicy();
+    const { getCourtName } = useCourtPolicy();
     const [ courtName, setCourtName ] = useState<string>("");
     const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
 
     useEffect(() => {
-        if (dispute && dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-            const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
-
-            let name = getCourtFullName(subcourtPolicy?.name ?? "");
-            setCourtName(name);
+        if (dispute && dispute.subcourt) {
+            let name = getCourtName(dispute.subcourt.id);
+            setCourtName(name)
         }
-    }, [dispute, subcourtToPolicy]);
+    }, [dispute, getCourtName]);
 
     useEffect(() => {
         if (dispute) {
