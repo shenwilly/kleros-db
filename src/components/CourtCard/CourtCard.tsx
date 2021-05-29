@@ -49,7 +49,7 @@ const CourtCard: React.FC<CourtCardProp> = ({ court }) => {
                             <TimeDisplay duration={timeUntilNextPeriod}/>
                         </div> */}
                     </CardBottomRow>
-                    <CardBottomRowMobile>
+                    {/* <CardBottomRowMobile> */}
                         {/* <div className="tc mt4">
                             <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
                         </div> */}
@@ -59,7 +59,7 @@ const CourtCard: React.FC<CourtCardProp> = ({ court }) => {
                             </div>
                             <TimeDisplay duration={timeUntilNextPeriod}/>
                         </div> */}
-                    </CardBottomRowMobile>
+                    {/* </CardBottomRowMobile> */}
                 </Card>
             </Padding>   
         </>
@@ -88,11 +88,11 @@ const CardTopRow = styled.div.attrs({
 `;
 
 const CardBottomRow = styled.div.attrs({
-    className: 'dn flex-gt-xs w-100 nowrap items-end mt3'
+    className: 'flex w-100 nowrap items-end mt3'
 })``;
 
-const CardBottomRowMobile = styled.div.attrs({
-    className: 'flex-column dn-gt-xs mt3 items-center'
-})``;
+// const CardBottomRowMobile = styled.div.attrs({
+//     className: 'flex-column dn-gt-xs mt3 items-center'
+// })``;
 
 export default CourtCard;
