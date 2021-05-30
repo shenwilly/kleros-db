@@ -15,6 +15,7 @@ import { ArbitrableProvider } from './contexts/Arbitrable';
 import useCourtPolicy from "./hooks/useCourtPolicy";
 import Spinner from "./components/Spinner";
 import { KLEROS_SUBGRAPH_ENDPOINT } from "./utils/constants/address";
+import Footer from "./components/Footer";
 
 const client = new ApolloClient({
   uri: KLEROS_SUBGRAPH_ENDPOINT,
@@ -58,6 +59,7 @@ const App: React.FC = () => {
             </Switch>
           </PageWrapper>
         </Router>
+        <Footer />
       </SiteWrapper>
       <div className={loadingClassName}>
         <LoadingScreen>
