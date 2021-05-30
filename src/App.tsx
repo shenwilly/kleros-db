@@ -11,6 +11,7 @@ import CourtPage from "./pages/Court";
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { CourtPolicyProvider } from './contexts/CourtPolicy';
+import { ArbitrableProvider } from './contexts/Arbitrable';
 import useCourtPolicy from "./hooks/useCourtPolicy";
 import Spinner from "./components/Spinner";
 import { KLEROS_SUBGRAPH_ENDPOINT } from "./utils/constants/address";
@@ -92,7 +93,9 @@ const Providers: React.FC = ({ children }) => {
       <ThemeProvider theme={theme}>
         <ApolloProvider client={client}>
           <CourtPolicyProvider>
-            {children}
+            <ArbitrableProvider>
+              {children}
+            </ArbitrableProvider>
           </CourtPolicyProvider>
         </ApolloProvider>
       </ThemeProvider>
