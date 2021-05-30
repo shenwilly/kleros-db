@@ -16,6 +16,7 @@ import { getDisputeEventLog, getMetaEvidenceEventLog, getIpfsFullURI, getRulingE
 import { DisputeRound } from "../../types/DisputeRound";
 import RoundCard from "../../components/RoundCard";
 import { PolicyData } from "../../types/Policy";
+import useArbitrable from "../../hooks/useArbitrable";
 
 interface DisputePageParams {
     disputeID: string
@@ -24,6 +25,7 @@ interface DisputePageParams {
 const DisputePage: React.FC = () => {
     let { disputeID } = useParams<DisputePageParams>();
     const { getCourtPolicy, getCourtName } = useCourtPolicy();
+    const { getArbitrableSubmissionURI } = useArbitrable();
     const { loading, data } = useQuery<DisputeGQLResult>(
         DISPUTE_GQL,
         { variables: { disputeID: disputeID } }
@@ -38,6 +40,7 @@ const DisputePage: React.FC = () => {
     const [ timeUntilNextPeriod, setTimeUntilNextPeriod ] = useState(0);
     const [ appPolicyURI, setAppPolicyURI ] = useState<string>("");
     const [ evidenceDisplayInterfaceURI, setEvidenceDisplayInterfaceURI ] = useState<string>("");
+    const [ appSubmissionURI, setAppSubmissionURI ] = useState<string>("");
     const [ rounds, setRounds ] = useState<DisputeRound[]>([]);
     
     useEffect(() => {
@@ -67,17 +70,16 @@ const DisputePage: React.FC = () => {
         };
     }, [dispute]);
 
-    // useEffect(() => {
-    //     if (dispute) {
-    //         if (dispute.subcourt && subcourtToPolicy.has(dispute.subcourt.id)) {
-    //             const subcourtPolicy = subcourtToPolicy.get(dispute.subcourt.id);
-    //             setCourtMetadataURI(subcourtPolicy?.uri ?? "");
+    useEffect(() => {
+        const fetchArbitrableSubmissionURI = async () => {
+            let submissionURI = await getArbitrableSubmissionURI(dispute?.id!, dispute?.arbitrable?.id!);
+            setAppSubmissionURI(submissionURI)
+        }
 
-    //             let name = getCourtFullName(subcourtPolicy?.name ?? "");
-    //             setCourtName(name);
-    //         }
-    //     }
-    // }, [dispute, subcourtToPolicy]);
+        if (dispute && dispute?.arbitrable) {
+            fetchArbitrableSubmissionURI();
+        }
+    }, [dispute, getArbitrableSubmissionURI]);
 
     useEffect(() => {
         if (dispute && dispute.subcourt) {
@@ -188,6 +190,8 @@ const DisputePage: React.FC = () => {
                             <li><a href={appPolicyURI} target="blank">App Policy</a></li>}
                         { courtPolicy && courtPolicy?.uri?.length > 0 && 
                             <li><a href={courtPolicy?.uri} target="blank">Court Metadata</a></li>}
+                        { appSubmissionURI.length > 0 && 
+                            <li><a href={appSubmissionURI} target="blank">App Submission</a></li>}
                     </StyledList>
 
                     <FloatBoxBottomRight>
