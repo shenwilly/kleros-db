@@ -41,9 +41,9 @@ const CourtPage: React.FC = () => {
     }, [court, getCourtPolicy]);
 
     const toggleModal = (label: string) => {
-        if (label == "alpha") {
+        if (label === "alpha") {
             setShowAlphaModal(!showAlphaModal)
-        } else if (label == "jurorCourtJump") {
+        } else if (label === "jurorCourtJump") {
             setShowJurorCourtJumpModal(!showJurorCourtJumpModal)
         }
     }

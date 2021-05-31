@@ -29,10 +29,6 @@ const Apps: React.FC = () => {
     );
 };
 
-const Title = styled.div.attrs({
-    className: 'f4'
-})``;
-
 const StyledGrid = styled.div.attrs({
     className: 'db w-100'
 })``;
