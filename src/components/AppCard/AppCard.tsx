@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { BiLinkExternal } from "react-icons/bi";
 import { ArbitrableData } from "../../types/Arbitrable";
@@ -18,14 +18,9 @@ const AppCard: React.FC<AppCardProp> = ({ arbitrableData }) => {
                 <Card>
                     <CardTopRow>
                         <span className="f4 b w-80">{name} <BiLinkExternal/></span>
-                        {/* <Spacer /> */}
                         { logo.length > 0 &&
                             <img src={logo} alt="thegraph" className="dib" height="80px" width="80px" />}
                     </CardTopRow>
-                    {/* <CardBottomRow>
-                        <Spacer/>
-                        <span>Disputes: 222</span>
-                    </CardBottomRow> */}
                 </Card>
             </Padding>   
         </>
@@ -52,9 +47,5 @@ const CardTopRow = styled.div.attrs({
 })`
     // height: 2rem;
 `;
-
-const CardBottomRow = styled.div.attrs({
-    className: 'flex w-100 nowrap items-end mt3'
-})``;
 
 export default AppCard;
