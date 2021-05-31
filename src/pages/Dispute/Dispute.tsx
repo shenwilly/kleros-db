@@ -145,11 +145,20 @@ const DisputePage: React.FC = () => {
         <Page>
             <Card>
                 <Title>Dispute #{disputeID} - {courtName}</Title>
+
+                <FloatBoxTopRight>
+                    <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
+                    <div className="tc tr-gt-xs mt3">
+                        <div>Next period in:</div>
+                        <TimeDisplay duration={timeUntilNextPeriod}/>
+                    </div>
+                </FloatBoxTopRight>
                 
                 <DisputeDetailContainer>
                     <SubTitle>{ metaEvidence?.title ||
                         "Registration Request"}
                     </SubTitle>
+                    
                     <Paragraph>
                         { metaEvidence?.description ||
                             "A request to register an entry to a curated list."}
@@ -195,14 +204,14 @@ const DisputePage: React.FC = () => {
                     </StyledList>
 
                     <FloatBoxBottomRight>
-                        <div className="tr mb2">Check case on:</div>
-                        <div className="tr mb2">
+                        <div className="tr-gt-xs mb2">Check case on:</div>
+                        <div className="tr-gt-xs mb2">
                             <a className="b" href={`https://court.kleros.io/cases/${disputeID}`} target="blank">Court</a>
                         </div>
-                        <div className="tr mb2">
+                        <div className="tr-gt-xs mb2">
                             <a className="b" href={`http://klerosboard.com/dispute/?id=${disputeID}`} target="blank">KlerosBoard</a>
                         </div>
-                        <div className="tr mb2">
+                        <div className="tr-gt-xs mb2">
                             <a className="b" href={`https://klerosexplorer.com/case/${disputeID}`} target="blank">KlerosExplorer</a>
                         </div>
                     </FloatBoxBottomRight>
@@ -242,14 +251,6 @@ const DisputePage: React.FC = () => {
                         <div className="mt1 f6">Submission</div>
                     </span>
                 </div> */}
-
-                <FloatBoxTopRight>
-                    <PeriodContainer period={dispute?.period} ruled={dispute?.ruled}/>
-                    <div className="tr mt3">
-                        <div>Next period in:</div>
-                        <TimeDisplay duration={timeUntilNextPeriod}/>
-                    </div>
-                </FloatBoxTopRight>
             </Card>
             <Card>
                 <div className="f4 mb3">
@@ -329,11 +330,11 @@ const SubTitle = styled.div.attrs({
 })``;
 
 const FloatBoxTopRight = styled.div.attrs({
-    className: 'absolute top-1 right-1 mt2 tr'
+    className: 'relative absolute-gt-xs top-0 top-1-gt-xs right-0 right-1-gt-xs mt0 mt2-gt-xs tc tr-gt-xs mv3 mb0-gt-xs'
 })``;
 
 const FloatBoxBottomRight = styled.div.attrs({
-    className: 'absolute right-1'
+    className: 'relative absolute-gt-xs right-0 right-1-gt-xs mb4 mb0-gt-xs'
 })`
     bottom: -20px;
 `;

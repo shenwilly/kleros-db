@@ -73,7 +73,7 @@ const CourtPage: React.FC = () => {
                 <Paragraph>
                     {subcourts.length > 0
                         ? subcourts.map((subcourt, index) => (
-                            <span>
+                            <span key={index}>
                                 <Link to={`${subcourt.id}`}>
                                     {getCourtName(subcourt.id)}
                                 </Link>
@@ -152,15 +152,15 @@ const CourtPage: React.FC = () => {
                     </ReactMarkdown>
                 </Paragraph>
 
-                <SubTitle>Documents:</SubTitle>
-                <Paragraph>
-                    <a href={courtPolicy?.uri} target="blank">Court Metadata</a>
-                </Paragraph>
-
                 <FloatBoxTopRight>
                     <StyledButton href="http://klerosboard.com/odds/" target="blank">Check Juror Odds</StyledButton>
                     <StyledButton href="https://court.kleros.io/courts" target="blank">Stake</StyledButton>
                 </FloatBoxTopRight>
+
+                <SubTitle>Documents:</SubTitle>
+                <Paragraph>
+                    <a href={courtPolicy?.uri} target="blank">Court Metadata</a>
+                </Paragraph>
 
                 <FloatBoxBottomRight>
                     <div className="tr mb2">Check court on:</div>
@@ -221,7 +221,11 @@ const SubTitle = styled.div.attrs({
 
 const Paragraph = styled.div.attrs({
     className: "db w-100"
-})``
+})`
+    p {
+        word-wrap: break-word;
+    }
+`
 
 const LoadingScreen = styled.div.attrs({
     className: "w-100 h-100 flex items-center justify-center"
@@ -230,7 +234,7 @@ const LoadingScreen = styled.div.attrs({
 `
 
 const FloatBoxTopRight = styled.div.attrs({
-    className: 'absolute top-1 right-1 tr'
+    className: 'db relative absolute-gt-xs top-0 top-1-gt-xs right-0 right-1-gt-xs tc tr-gt-xs'
 })``;
 
 const FloatBoxBottomRight = styled.div.attrs({
