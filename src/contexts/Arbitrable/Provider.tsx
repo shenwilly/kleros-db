@@ -44,7 +44,7 @@ const Provider: React.FC = ({ children }) => {
                     id: "tempRealityID"
                 },
                 iconUri: realityLogo,
-                uri: "https://omen.eth.link/"
+                uri: "https://reality.eth.link/"
             },
         ])
     }, []);
