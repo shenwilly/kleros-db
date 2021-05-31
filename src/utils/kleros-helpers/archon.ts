@@ -2,9 +2,9 @@ import Archon from "@kleros/archon";
 import { DisputeLog } from "../../types/DisputeLog";
 import { MetaEvidenceLog } from "../../types/MetaEvidence";
 import { RulingLog } from "../../types/Ruling";
-import { INFURA_ENDPOINT, KLEROS_COURT_ADDRESS } from "../constants/address";
+import { PROVIDER_ENDPOINT, KLEROS_COURT_ADDRESS } from "../constants/address";
 
-const archon = new Archon(INFURA_ENDPOINT);
+const archon = new Archon(PROVIDER_ENDPOINT);
 
 export const getDisputeEventLog = async (disputeID: string, arbitrable: string): Promise<DisputeLog> => {
     return await archon.arbitrable.getDispute(
