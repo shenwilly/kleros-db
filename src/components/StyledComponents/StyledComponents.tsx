@@ -16,7 +16,7 @@ export const StyledLink = styled(Link).attrs({
 `;
 
 export const StyledButton = styled.a.attrs({
-    className: 'f5 link dim pa3 dib white pointer mh2 br3 tc b'
+    className: 'f5 link dim pa3 dib white pointer mh2 br3 tc b mv2 mv0-gt-xs'
 })`
     min-width: 150px;
 
