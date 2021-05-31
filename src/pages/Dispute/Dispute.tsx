@@ -259,9 +259,9 @@ const DisputePage: React.FC = () => {
                         return <RoundCard key={round.id} round={round} optionTitles={metaEvidence.rulingOptions?.titles}/>
                     })}
             </Card>
-            <Card>
+            {/* <Card>
                 Evidences (Under construction)
-            </Card>
+            </Card> */}
         </Page>
     );
 };
