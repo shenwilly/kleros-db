@@ -32,7 +32,7 @@ const DisputesPage: React.FC = () => {
                         {  
                             latestDisputes.map((dispute) => (
                                 <StyledLink to={`disputes/${dispute.id}`} key={dispute.id}>
-                                    <DisputeCard key={dispute.id} dispute={dispute}/>
+                                    <DisputeCard dispute={dispute}/>
                                 </StyledLink>
                             ))
                         }

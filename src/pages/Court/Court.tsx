@@ -10,6 +10,8 @@ import { Court } from "../../types/Court";
 import { StyledButton } from "../../components/StyledComponents/StyledComponents";
 import { ethers } from "ethers";
 import { PolicyData } from "../../types/Policy";
+import { AiOutlineQuestionCircle } from "react-icons/ai";
+import Modal from "../../components/Modal";
 
 interface CourtPageParams {
     subcourtID: string
@@ -23,6 +25,8 @@ const CourtPage: React.FC = () => {
         { variables: { subcourtID: subcourtID } }
     );
     const [ courtPolicy, setCourtPolicy ] = useState<PolicyData>();
+    const [ showAlphaModal, setShowAlphaModal ] = useState<boolean>(false);
+    const [ showJurorCourtJumpModal, setShowJurorCourtJumpModal ] = useState<boolean>(false);
 
     const court = data?.court!;
     const subcourts = court?.children ?? [];
@@ -35,6 +39,14 @@ const CourtPage: React.FC = () => {
             }
         }
     }, [court, getCourtPolicy]);
+
+    const toggleModal = (label: string) => {
+        if (label == "alpha") {
+            setShowAlphaModal(!showAlphaModal)
+        } else if (label == "jurorCourtJump") {
+            setShowJurorCourtJumpModal(!showJurorCourtJumpModal)
+        }
+    }
     
     if (loading)
         return (
@@ -99,16 +111,37 @@ const CourtPage: React.FC = () => {
                         </Paragraph>
                     </GridElement>
                     <GridElement>
-                        <SubTitle>Alpha:</SubTitle>
+                        <SubTitle>
+                            Alpha <AiOutlineQuestionCircle 
+                            className="f4 pointer" 
+                            onClick={() => toggleModal("alpha")}/>:
+                        </SubTitle>
                         <Paragraph>
                             {court.alpha}
                         </Paragraph>
+                        <Modal 
+                            isOpen={showAlphaModal}
+                            title="Alpha"
+                            onDismiss={() => toggleModal("alpha")}>
+                            Basis point to calculate the amount of PNK lost when jurors vote incoherently
+                        </Modal>
                     </GridElement>
                     <GridElement>
-                        <SubTitle>Jurors for Court Jump:</SubTitle>
+                        <SubTitle>Jurors for Court Jump <AiOutlineQuestionCircle 
+                            className="f4 pointer" 
+                            onClick={() => toggleModal("jurorCourtJump")}/>:
+                        </SubTitle>
                         <Paragraph>
                             {court.jurorsForCourtJump}
                         </Paragraph>
+                        <Modal 
+                            isOpen={showJurorCourtJumpModal}
+                            title="Jurors for Court Jump"
+                            onDismiss={() => toggleModal("jurorCourtJump")}>
+                                Once a dispute round (appeal) has reached this number of jurors, 
+                                the next appeal will be handled by the parent court. If there is no parent court,
+                                further appeal is not possible.
+                        </Modal>
                     </GridElement>
                 </Grid>
 
