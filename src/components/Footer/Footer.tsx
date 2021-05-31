@@ -8,10 +8,10 @@ const Footer: React.FC = () => {
   return (
     <StyledFooter>
         <StyledLink href="https://thegraph.com/explorer/subgraph/shenwilly/kleros-liquid" target="blank">
-            <img src={graphLogo} height="20px" width="20px" />
+            <img src={graphLogo} alt="thegraph" height="20px" width="20px" />
         </StyledLink>
         <StyledLink href="https://github.com/shenwilly/kleros-db" target="blank">
-            <img src={githubLogo} height="20px" width="20px" />
+            <img src={githubLogo} alt="github" height="20px" width="20px" />
         </StyledLink>
     </StyledFooter>
   );
